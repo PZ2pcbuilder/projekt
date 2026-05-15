@@ -1,0 +1,104 @@
+@model IEnumerable<PCBuilder.Models.Case>
+
+@{
+    ViewData["Title"] = "Obudowy";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-5"><i class="bi bi-pc-display"></i> Lista Obudów</h1>
+        <span class="badge bg-secondary">Liczba pozycji: @Model.Count()</span>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form asp-action="Index" method="get" class="row g-3">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                        <input type="text" name="searchString" class="form-control" placeholder="Szukaj po nazwie, typie lub kolorze..." value="@ViewData["CurrentFilter"]" />
+                        <button type="submit" class="btn btn-primary">Filtruj</button>
+                    </div>
+                </div>
+                <div class="col-md-6 text-end">
+                    <a asp-action="Index" class="btn btn-outline-secondary">Wyczyść</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="table-responsive shadow-sm rounded">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-dark">
+                <tr>
+                    <th>Model</th>
+                    <th>Typ i Kolor</th>
+                    <th class="text-center">Panel boczny</th>
+                    <th class="text-center">Max GPU</th>
+                    <th class="text-center">Formaty Mobo</th>
+                    <th class="text-end">Cena</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <div class="fw-bold">@item.Name</div>
+                            <small class="text-muted">Pojemność: @item.ExternalVolume L</small>
+                        </td>
+                        <td>
+                            <div>@item.Type</div>
+                            <span class="badge bg-light text-dark border">@item.Color</span>
+                        </td>
+                        <td class="text-center">
+                            <span class="text-muted small">@item.SidePanel</span>
+                        </td>
+                        <td class="text-center">
+                            <span class="fw-bold text-info">@(item.MaxGpuLengthMm)mm</span>
+                        </td>
+                        <td class="text-center">
+                            <div style="max-width: 200px; margin: auto;">
+                                @if (!string.IsNullOrEmpty(item.SupportedMoboFormFactors))
+                                {
+                                    @foreach (var form in item.SupportedMoboFormFactors.Replace("[", "").Replace("]", "").Replace("'", "").Split(','))
+                                    {
+                                        <span class="badge bg-secondary mb-1" style="font-size: 0.7rem;">@form.Trim()</span>
+                                    }
+                                }
+                            </div>
+                        </td>
+                        <td class="text-end fw-bold text-success">
+                            @(item.Price?.ToString("C") ?? "N/A")
+                        </td>
+                        <td class="text-end">
+                            <button class="btn btn-sm btn-outline-primary" title="Dodaj do konfiguracji">
+                                <i class="bi bi-plus-lg"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-warning mt-4 text-center">
+            Nie znaleziono obudów spełniających kryteria.
+        </div>
+    }
+</div>
+
+<style>
+    .table thead th {
+        font-weight: 500;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.05em;
+    }
+    .table-hover tbody tr:hover {
+        background-color: rgba(0, 123, 255, 0.05);
+    }
+</style>

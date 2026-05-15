@@ -2,6 +2,7 @@ using PCBuilder.Models;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Identity;
 
 namespace PCBuilder.Data
 {
@@ -51,7 +52,7 @@ namespace PCBuilder.Data
                     context.Memories.Add(new Memory {
                         Name = p[0],
                         Price = ParseDecimal(p[1]),
-                        Speed = p[2],
+                        Speed = int.TryParse(p[2],out int sp) ? sp:0,
                         MemoryType = p[7], // 8. kolumna (indeks 7)
                         TotalCapacity = ParseDouble(p[8]) ?? 0, // 9. kolumna (indeks 8)
                         ModuleCount = int.TryParse(p[9], out int mc) ? mc : 1 // 10. kolumna (indeks 9)
@@ -186,11 +187,22 @@ namespace PCBuilder.Data
                     });
                 }
             }
-
-            context.SaveChanges();
+            // Users
+            if (!context.Users.Any(u => u.Username == "admin"))
+                {
+                    var admin = new User
+                    {
+                        Username = "admin",
+                        Role = "Admin",
+                        ApiToken = Guid.NewGuid().ToString(),
+                        PasswordHash = new PasswordHasher<User>().HashPassword(null!, "admin")
+                    };
+                    
+                    context.Users.Add(admin);
+                }
+             context.SaveChanges();
         }
 
-        // Metoda do poprawnego dzielenia CSV z uwzględnieniem cudzysłowów
         private static string[] SplitCsv(string line)
         {
             return Regex.Split(line, ",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");

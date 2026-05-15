@@ -1,37 +1,37 @@
 name,price,speed,price_per_gb,color,first_word_latency,cas_latency,memory_type,capacity_gb,module_count
-Corsair Vengeance RGB,94.99,"5,6000",2.968,Black,12.0,36.0,DDR5,32,2
-G.Skill Flare X5,89.99,"5,6000",2.812,Black,12.0,36.0,DDR5,32,2
-Corsair Vengeance LPX,45.99,"4,3200",2.874,Black / Yellow,10.0,16.0,DDR4,16,2
-Corsair Vengeance,129.99,"5,6000",4.062,Black / Gray,10.0,30.0,DDR5,32,2
-TEAMGROUP T-Create Expert,98.99,"5,6000",3.093,Black,10.0,30.0,DDR5,32,2
-Corsair Vengeance LPX,77.98,"4,3600",2.437,Black / Yellow,10.0,18.0,DDR4,32,2
-Crucial Pro Overclocking,84.99,"5,6000",2.656,Black,12.0,36.0,DDR5,32,2
-G.Skill Trident Z5 RGB,112.99,"5,6000",3.53,Black,10.0,30.0,DDR5,32,2
-Kingston FURY Beast,48.99,"5,6000",3.061,Black,12.0,36.0,DDR5,16,2
-G.Skill Ripjaws S5,94.99,"5,6000",2.968,Black,10.0,30.0,DDR5,32,2
-Patriot Viper Venom,89.99,"5,6000",2.812,Black / Silver,12.0,36.0,DDR5,32,2
-Crucial Classic,19.99,"4,2666",2.498,Green,14.25,19.0,DDR4,8,1
-G.Skill Trident Z5 Neo RGB,112.99,"5,6000",3.53,Black,10.0,30.0,DDR5,32,2
-G.Skill Ripjaws V,52.99,"4,3600",1.655,Black,10.0,18.0,DDR4,32,2
-Silicon Power Value Gaming,75.97,"4,3200",2.374,DDR4,10.0,16.0,DDR4,32,2
-G.Skill Ripjaws V,34.99,"4,3200",2.186,Black,10.0,16.0,DDR4,16,2
-Corsair Vengeance,94.99,"5,6000",2.968,Black,10.0,30.0,DDR5,32,2
-G.Skill Ripjaws V,48.99,"4,3200",1.53,Black,10.0,16.0,DDR4,32,2
-Kingston FURY Renegade RGB,171.99,"5,6000",3.583,Black / Silver,10.0,32.0,DDR5,48,2
-Crucial Classic,35.97,"4,2666",2.248,Green,14.25,19.0,DDR4,16,2
-Lexar Thor OC,104.99,"5,6000",3.28,White,10.667,32.0,DDR5,32,2
-TEAMGROUP Elite,31.99,"4,3200",1.999,Black,13.75,22.0,DDR4,16,2
-Crucial Pro,68.95,"5,5600",2.155,Black,16.429,46.0,DDR5,32,2
-ADATA XPG Lancer Blade RGB,109.99,"5,6000",3.437,Black,10.0,30.0,DDR5,32,2
-Mushkin Redline ST,92.99,"5,6000",2.906,White,10.0,30.0,DDR5,32,2
-G.Skill Trident Z Neo,109.99,"4,3600",3.437,Black / Silver,10.0,18.0,DDR4,32,2
-G.Skill Trident Z5 RGB,179.99,"5,6400",2.812,Black,10.0,32.0,DDR5,64,2
-G.Skill Trident Z5 RGB,112.99,"5,6400",3.53,Black,10.0,32.0,DDR5,32,2
-G.Skill Flare X5,102.99,"5,6000",3.218,Black,10.0,30.0,DDR5,32,2
-G.Skill Trident Z5 RGB,112.99,"5,6000",3.53,Silver,10.0,30.0,DDR5,32,2
-Crucial Pro,44.49,"5,5600",2.78,Black,16.429,46.0,DDR5,16,2
-G.Skill Trident Z5 Neo,112.99,"5,6000",3.53,Black,10.0,30.0,DDR5,32,2
-Silicon Power XPOWER Zenith Gaming,81.99,"5,6000",2.562,Black,10.0,30.0,DDR5,32,2
-G.Skill Trident Z5 RGB,194.99,"5,6000",3.046,Black,10.0,30.0,DDR5,64,2
-Patriot Viper Steel,34.99,"4,3200",2.186,Black / Silver,10.0,16.0,DDR4,16,2
-Mushkin Redline ST,92.99,"5,6000",2.906,Black,10.0,30.0,DDR5,32,2
+Corsair Vengeance RGB,94.99,6000,2.968,Black,12.0,36.0,DDR5,32,2
+G.Skill Flare X5,89.99,6000,2.812,Black,12.0,36.0,DDR5,32,2
+Corsair Vengeance LPX,45.99,3200,2.874,Black / Yellow,10.0,16.0,DDR4,16,2
+Corsair Vengeance,129.99,6000,4.062,Black / Gray,10.0,30.0,DDR5,32,2
+TEAMGROUP T-Create Expert,98.99,6000,3.093,Black,10.0,30.0,DDR5,32,2
+Corsair Vengeance LPX,77.98,3600,2.437,Black / Yellow,10.0,18.0,DDR4,32,2
+Crucial Pro Overclocking,84.99,6000,2.656,Black,12.0,36.0,DDR5,32,2
+G.Skill Trident Z5 RGB,112.99,6000,3.53,Black,10.0,30.0,DDR5,32,2
+Kingston FURY Beast,48.99,6000,3.061,Black,12.0,36.0,DDR5,16,2
+G.Skill Ripjaws S5,94.99,6000,2.968,Black,10.0,30.0,DDR5,32,2
+Patriot Viper Venom,89.99,6000,2.812,Black / Silver,12.0,36.0,DDR5,32,2
+Crucial Classic,19.99,2666,2.498,Green,14.25,19.0,DDR4,8,1
+G.Skill Trident Z5 Neo RGB,112.99,6000,3.53,Black,10.0,30.0,DDR5,32,2
+G.Skill Ripjaws V,52.99,3600,1.655,Black,10.0,18.0,DDR4,32,2
+Silicon Power Value Gaming,75.97,3200,2.374,DDR4,10.0,16.0,DDR4,32,2
+G.Skill Ripjaws V,34.99,3200,2.186,Black,10.0,16.0,DDR4,16,2
+Corsair Vengeance,94.99,6000,2.968,Black,10.0,30.0,DDR5,32,2
+G.Skill Ripjaws V,48.99,3200,1.53,Black,10.0,16.0,DDR4,32,2
+Kingston FURY Renegade RGB,171.99,6000,3.583,Black / Silver,10.0,32.0,DDR5,48,2
+Crucial Classic,35.97,2666,2.248,Green,14.25,19.0,DDR4,16,2
+Lexar Thor OC,104.99,6000,3.28,White,10.667,32.0,DDR5,32,2
+TEAMGROUP Elite,31.99,3200,1.999,Black,13.75,22.0,DDR4,16,2
+Crucial Pro,68.95,5600,2.155,Black,16.429,46.0,DDR5,32,2
+ADATA XPG Lancer Blade RGB,109.99,6000,3.437,Black,10.0,30.0,DDR5,32,2
+Mushkin Redline ST,92.99,6000,2.906,White,10.0,30.0,DDR5,32,2
+G.Skill Trident Z Neo,109.99,3600,3.437,Black / Silver,10.0,18.0,DDR4,32,2
+G.Skill Trident Z5 RGB,179.99,6400,2.812,Black,10.0,32.0,DDR5,64,2
+G.Skill Trident Z5 RGB,112.99,6400,3.53,Black,10.0,32.0,DDR5,32,2
+G.Skill Flare X5,102.99,6000,3.218,Black,10.0,30.0,DDR5,32,2
+G.Skill Trident Z5 RGB,112.99,6000,3.53,Silver,10.0,30.0,DDR5,32,2
+Crucial Pro,44.49,5600,2.78,Black,16.429,46.0,DDR5,16,2
+G.Skill Trident Z5 Neo,112.99,6000,3.53,Black,10.0,30.0,DDR5,32,2
+Silicon Power XPOWER Zenith Gaming,81.99,6000,2.562,Black,10.0,30.0,DDR5,32,2
+G.Skill Trident Z5 RGB,194.99,6000,3.046,Black,10.0,30.0,DDR5,64,2
+Patriot Viper Steel,34.99,3200,2.186,Black / Silver,10.0,16.0,DDR4,16,2
+Mushkin Redline ST,92.99,6000,2.906,Black,10.0,30.0,DDR5,32,2
