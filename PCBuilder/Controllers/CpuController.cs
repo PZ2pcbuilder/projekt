@@ -14,19 +14,31 @@ namespace PCBuilder.Controllers
         }
 
         // Akcja wyświetlająca listę
-        public async Task<IActionResult> Index(string searchString)
+       public async Task<IActionResult> Index(string searchString)
         {
             ViewData["CurrentFilter"] = searchString;
-            var cpus = from c in _context.Cpus select c;
+            var query = _context.Cpus.AsQueryable();
+
+            // --- KOMPATYBILNOŚĆ W DRUGĄ STRONĘ ---
+            int? selectedMotherboardId = HttpContext.Session.GetInt32("SelectedMotherboardId");
+            if (selectedMotherboardId != null)
+            {
+                var selectedMotherboard = await _context.Motherboards.FindAsync(selectedMotherboardId);
+                if (selectedMotherboard != null)
+                {
+                    // Pokazuj tylko procesory pasujące do wybranej płyty
+                    query = query.Where(c => c.Socket == selectedMotherboard.Socket);
+                    ViewData["CompatibilityMessage"] = $"Pokazuję procesory pasujące do płyty z gniazdem {selectedMotherboard.Socket}";
+                }
+            }
+            // -------------------------------------
 
             if (!string.IsNullOrEmpty(searchString))
             {
-                cpus = cpus.Where(s => s.Name.Contains(searchString) 
-                                    || s.Socket.Contains(searchString)
-                                    || s.Microarchitecture.Contains(searchString));
+                query = query.Where(s => s.Name.Contains(searchString) || s.Socket.Contains(searchString));
             }
 
-            return View(await cpus.ToListAsync());
+            return View(await query.ToListAsync());
         }
     }
 }

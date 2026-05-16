@@ -16,34 +16,44 @@ namespace PCBuilder.Controllers
         }
 
         // GET: Case
-        public async Task<IActionResult> Index(string searchString)
+    public async Task<IActionResult> Index(string searchString)
+    {
+        ViewData["CurrentFilter"] = searchString;
+        var casesQuery = _context.Cases.AsQueryable();
+
+        // --- NOWA KOMPATYBILNOŚĆ: OBUDOWA vs PŁYTA GŁÓWNA ---
+        int? selectedMotherboardId = HttpContext.Session.GetInt32("SelectedMotherboardId");
+        if (selectedMotherboardId != null)
         {
-            // Przechowujemy frazę wyszukiwania, aby wróciła do pola tekstowego w widoku
-            ViewData["CurrentFilter"] = searchString;
-
-            // Startujemy z bazowym zapytaniem
-            var casesQuery = _context.Cases.AsQueryable();
-
-            if (!string.IsNullOrEmpty(searchString))
+            var selectedMotherboard = await _context.Motherboards.FindAsync(selectedMotherboardId);
+            if (selectedMotherboard != null && !string.IsNullOrEmpty(selectedMotherboard.FormFactor))
             {
-                // Próbujemy sparsować wpisaną frazę na liczbę (np. dla długości GPU lub objętości)
-                bool isNumber = double.TryParse(searchString, out double searchNumeric);
-
-                casesQuery = casesQuery.Where(c => 
-                    c.Name.Contains(searchString) || 
-                    c.Type.Contains(searchString) || 
-                    c.Color.Contains(searchString) ||
-                    c.SupportedMoboFormFactors.Contains(searchString) ||
-                    // Jeśli użytkownik wpisał liczbę, przeszukaj też parametry techniczne
-                    (isNumber && (c.MaxGpuLengthMm >= searchNumeric || c.ExternalVolume == searchNumeric))
-                );
+                // Szukamy obudów, które w stringu z formatami mają zapisany format naszej płyty
+                casesQuery = casesQuery.Where(c => c.SupportedMoboFormFactors.Contains(selectedMotherboard.FormFactor));
+                ViewData["CompatibilityMessage"] = $"Pokazuję obudowy kompatybilne z formatem płyty głównej {selectedMotherboard.FormFactor} ({selectedMotherboard.Name}).";
             }
-
-            // Pobieramy dane asynchronicznie i sortujemy np. po nazwie
-            var result = await casesQuery.OrderBy(c => c.Name).ToListAsync();
-
-            return View(result);
         }
+
+        // Istniejąca już wcześniej logika filtrowania dla długości GPU:
+        int? selectedGpuId = HttpContext.Session.GetInt32("SelectedGpuId");
+        if (selectedGpuId != null)
+        {
+            var selectedGpu = await _context.Gpus.FindAsync(selectedGpuId);
+            if (selectedGpu != null && selectedGpu.Length.HasValue)
+            {
+                casesQuery = casesQuery.Where(c => c.MaxGpuLengthMm >= selectedGpu.Length.Value);
+                ViewData["CompatibilityMessage"] = (ViewData["CompatibilityMessage"] != null ? ViewData["CompatibilityMessage"] + " oraz " : "") + $"mieszczące kartę o długości {selectedGpu.Length}mm.";
+            }
+        }
+
+        if (!string.IsNullOrEmpty(searchString))
+        {
+            bool isNumber = double.TryParse(searchString, out double searchNumeric);
+            casesQuery = casesQuery.Where(c => c.Name.Contains(searchString) || c.Type.Contains(searchString) || (isNumber && c.MaxGpuLengthMm >= searchNumeric));
+        }
+
+        return View(await casesQuery.OrderBy(c => c.Name).ToListAsync());
+    }
 
         // Opcjonalnie: Szczegóły obudowy
         public async Task<IActionResult> Details(int? id)

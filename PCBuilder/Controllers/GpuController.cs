@@ -17,17 +17,28 @@ namespace PCBuilder.Controllers
         public async Task<IActionResult> Index(string searchString)
         {
             ViewData["CurrentFilter"] = searchString;
-            var gpus = from g in _context.Gpus select g;
+            var query = _context.Gpus.AsQueryable();
 
-        if (!string.IsNullOrEmpty(searchString))
+            // --- KOMPATYBILNOŚĆ: GPU vs OBUDOWA ---
+            int? selectedCaseId = HttpContext.Session.GetInt32("SelectedCaseId");
+            if (selectedCaseId != null)
+            {
+                var selectedCase = await _context.Cases.FindAsync(selectedCaseId);
+                if (selectedCase != null && selectedCase.MaxGpuLengthMm.HasValue)
+                {
+                    // Pokazujemy tylko te karty, których długość jest mniejsza lub równa wolnej przestrzeni w obudowie
+                    query = query.Where(g => g.Length <= selectedCase.MaxGpuLengthMm.Value);
+                    ViewData["CompatibilityMessage"] = $"Filtrowanie aktywne: Pokazuję karty o długości do {selectedCase.MaxGpuLengthMm}mm pasujące do obudowy {selectedCase.Name}.";
+                }
+            }
+
+            if (!string.IsNullOrEmpty(searchString))
             {
                 bool isNumber = double.TryParse(searchString, out double searchNumeric);
-
-                gpus = gpus.Where(s => s.Name.Contains(searchString) 
-                                    || s.Chipset.Contains(searchString)
-                                    || (isNumber && s.Memory == searchNumeric));
+                query = query.Where(s => s.Name.Contains(searchString) || s.Chipset.Contains(searchString) || (isNumber && s.Memory == searchNumeric));
             }
-            return View(await gpus.ToListAsync());
+
+            return View(await query.ToListAsync());
         }
     }
 }

@@ -18,18 +18,39 @@ namespace PCBuilder.Controllers
             ViewData["CurrentFilter"] = searchString;
             var query = _context.Motherboards.AsQueryable();
 
-            if (!string.IsNullOrEmpty(searchString))
+            // --- NOWA KOMPATYBILNOŚĆ: PŁYTA GŁÓWNA vs OBUDOWA ---
+            int? selectedCaseId = HttpContext.Session.GetInt32("SelectedCaseId");
+            if (selectedCaseId != null)
             {
-                query = query.Where(m => 
-                    m.Name.Contains(searchString) || 
-                    m.Socket.Contains(searchString) || 
-                    m.MemoryType.Contains(searchString) ||
-                    m.FormFactor.Contains(searchString));
+                var selectedCase = await _context.Cases.FindAsync(selectedCaseId);
+                if (selectedCase != null && !string.IsNullOrEmpty(selectedCase.SupportedMoboFormFactors))
+                {
+
+                    query = query.Where(m => selectedCase.SupportedMoboFormFactors.Contains(m.FormFactor));
+                    
+                    ViewData["CompatibilityMessage"] = $"Pokazuję płyty główne pasujące do obudowy {selectedCase.Name} (Obsługiwane formaty: {selectedCase.SupportedMoboFormFactors.Replace("[","").Replace("]","").Replace("'","")}).";
+                }
             }
 
-            // Sortujemy domyślnie po nazwie
-            var result = await query.OrderBy(m => m.Name).ToListAsync();
-            return View(result);
+            // Istniejąca już wcześniej logika filtrowania dla CPU:
+            int? selectedCpuId = HttpContext.Session.GetInt32("SelectedCpuId");
+            if (selectedCpuId != null)
+            {
+                var selectedCpu = await _context.Cpus.FindAsync(selectedCpuId);
+                if (selectedCpu != null)
+                {
+                    query = query.Where(m => m.Socket == selectedCpu.Socket);
+                    // Łączymy komunikaty, jeśli oba filtry są aktywne
+                    ViewData["CompatibilityMessage"] = (ViewData["CompatibilityMessage"] != null ? ViewData["CompatibilityMessage"] + " oraz " : "") + $"pasujące do gniazda CPU: {selectedCpu.Socket}";
+                }
+            }
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                query = query.Where(m => m.Name.Contains(searchString) || m.FormFactor.Contains(searchString));
+            }
+
+            return View(await query.OrderBy(m => m.Name).ToListAsync());
         }
     }
 }
