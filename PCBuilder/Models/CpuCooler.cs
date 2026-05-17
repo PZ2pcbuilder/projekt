@@ -13,12 +13,12 @@ namespace PCBuilder.Models
         public decimal? Price { get; set; }
 
         // Prędkość obrotowa, często podawana jako zakres "600,2000"
-        public required string Rpm { get; set; }
+        public string? Rpm { get; set; }
 
         // Poziom hałasu, również może być zakresem lub pojedynczą wartością
-        public required string NoiseLevel { get; set; }
+        public string? NoiseLevel { get; set; }
 
-        public required string Color { get; set; }
+        public string? Color { get; set; }
 
         // Rozmiar chłodnicy (dla chłodzeń wodnych AIO), np. 240.0 lub 360.0
         public double? Size { get; set; }
@@ -29,6 +29,6 @@ namespace PCBuilder.Models
 
         // Wysokość chłodzenia w mm - kluczowe do sprawdzenia, czy zmieści się w obudowie
         // Porównujemy to z Case.MaxCpuCoolerHeightMm
-        public double? HeightMm { get; set; }
+        public required int HeightMm { get; set; }
     }
 }

@@ -25,10 +25,22 @@ namespace PCBuilder.Controllers
                 var selectedCase = await _context.Cases.FindAsync(selectedCaseId);
                 if (selectedCase != null && !string.IsNullOrEmpty(selectedCase.SupportedMoboFormFactors))
                 {
+                    // 1. Zabezpieczamy listę z obudowy:
+                    // Usuwamy nawiasy, apostrofy, spacje, zamieniamy na małe litery i otaczamy przecinkami
+                    // Np. "['ATX', 'Micro ATX']" -> ",atx,microatx,"
+                    string supportedFactorsCleaned = "," + selectedCase.SupportedMoboFormFactors
+                        .Replace(" ", "")
+                        .ToLower() + ",";
 
-                    query = query.Where(m => selectedCase.SupportedMoboFormFactors.Contains(m.FormFactor));
+                    // 2. Filtrujemy płyty główne:
+                    // Sprawdzamy czy nasza oczyszczona lista z obudowy (zmienna lokalna)
+                    // ZAWIERA format płyty głównej (odpowiednio oczyszczony i otoczony przecinkami)
+                    query = query.Where(m => 
+                        supportedFactorsCleaned.Contains("," + m.FormFactor.Replace(" ", "").ToLower() + ",")
+                    );
                     
-                    ViewData["CompatibilityMessage"] = $"Pokazuję płyty główne pasujące do obudowy {selectedCase.Name} (Obsługiwane formaty: {selectedCase.SupportedMoboFormFactors.Replace("[","").Replace("]","").Replace("'","")}).";
+                    // Zostawiłem Twoje wyświetlanie ładnego komunikatu bez zmian
+                    ViewData["CompatibilityMessage"] = $"Pokazuję płyty główne pasujące do obudowy {selectedCase.Name} (Obsługiwane formaty: {selectedCase.SupportedMoboFormFactors}).";
                 }
             }
 
@@ -47,7 +59,7 @@ namespace PCBuilder.Controllers
 
             if (!string.IsNullOrEmpty(searchString))
             {
-                query = query.Where(m => m.Name.Contains(searchString) || m.FormFactor.Contains(searchString));
+                query = query.Where(m => (m.Name != null && m.Name.ToLower().Contains(searchString.ToLower())) || (m.FormFactor != null && m.FormFactor.ToLower().Contains(searchString.ToLower())));
             }
 
             return View(await query.OrderBy(m => m.Name).ToListAsync());

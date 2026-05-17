@@ -51,14 +51,11 @@
                             <span class="badge bg-info text-dark">@item.MemoryType</span>
                         </td>
                         <td class="text-center">
-                            <span class="fw-bold">@(item.TotalCapacity)GB</span>
-                        </td>
-                        <td class="text-center">
                             <span class="text-muted">@item.Speed</span>
                         </td>
                         <td class="text-center">
                             <span class="badge bg-light text-dark border">
-                                @item.ModuleCount x @(item.TotalCapacity / (item.ModuleCount > 0 ? item.ModuleCount : 1))GB
+                                @item.Modules
                             </span>
                         </td>
                         <td class="text-end fw-bold text-success">

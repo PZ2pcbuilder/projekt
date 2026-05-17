@@ -11,18 +11,18 @@ namespace PCBuilder.Data
         }
 
         // Tabele komponentów
-        public DbSet<Cpu> Cpus { get; set; }
-        public DbSet<Motherboard> Motherboards { get; set; }
-        public DbSet<Memory> Memories { get; set; }
-        public DbSet<Gpu> Gpus { get; set; }
-        public DbSet<Case> Cases { get; set; }
-        public DbSet<CpuCooler> CpuCoolers { get; set; }
-        public DbSet<Storage> Storages { get; set; }
-        public DbSet<PowerSupply> PowerSupplies { get; set; }
+        public required DbSet<Cpu> Cpus { get; set; }
+        public required DbSet<Motherboard> Motherboards { get; set; }
+        public required DbSet<Memory> Memories { get; set; }
+        public required DbSet<Gpu> Gpus { get; set; }
+        public required DbSet<Case> Cases { get; set; }
+        public required DbSet<CpuCooler> CpuCoolers { get; set; }
+        public required DbSet<Storage> Storages { get; set; }
+        public required DbSet<PowerSupply> PowerSupplies { get; set; }
 
         // Tabele systemowe
-        public DbSet<User> Users { get; set; }
-        public DbSet<PcBuild> PcBuilds { get; set; }
+        public required DbSet<User> Users { get; set; }
+        public required DbSet<PcBuild> PcBuilds { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

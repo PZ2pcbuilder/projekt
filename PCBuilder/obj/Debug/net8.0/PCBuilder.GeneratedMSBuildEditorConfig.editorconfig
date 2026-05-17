@@ -9,75 +9,75 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = PCBuilder
 build_property.RootNamespace = PCBuilder
-build_property.ProjectDir = D:\studia\studia\PZ2\laby\projekt\PCBuilder\
+build_property.ProjectDir = C:\Users\piotr\OneDrive\Desktop\studia\semestr 4\programowanie zaawansowane 2\ćwiczenia\Lab10\projekt\PCBuilder\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 8.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = D:\studia\studia\PZ2\laby\projekt\PCBuilder
+build_property.MSBuildProjectDirectory = C:\Users\piotr\OneDrive\Desktop\studia\semestr 4\programowanie zaawansowane 2\ćwiczenia\Lab10\projekt\PCBuilder
 build_property._RazorSourceGeneratorDebug = 
 
-[D:/studia/studia/PZ2/laby/projekt/PCBuilder/Views/Case/Index.cshtml]
+[C:/Users/piotr/OneDrive/Desktop/studia/semestr 4/programowanie zaawansowane 2/ćwiczenia/Lab10/projekt/PCBuilder/Views/Case/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2FzZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/studia/studia/PZ2/laby/projekt/PCBuilder/Views/Configuration/Index.cshtml]
+[C:/Users/piotr/OneDrive/Desktop/studia/semestr 4/programowanie zaawansowane 2/ćwiczenia/Lab10/projekt/PCBuilder/Views/Configuration/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29uZmlndXJhdGlvblxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/studia/studia/PZ2/laby/projekt/PCBuilder/Views/CpuCooler/Index.cshtml]
+[C:/Users/piotr/OneDrive/Desktop/studia/semestr 4/programowanie zaawansowane 2/ćwiczenia/Lab10/projekt/PCBuilder/Views/CpuCooler/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3B1Q29vbGVyXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/studia/studia/PZ2/laby/projekt/PCBuilder/Views/Cpu/Index.cshtml]
+[C:/Users/piotr/OneDrive/Desktop/studia/semestr 4/programowanie zaawansowane 2/ćwiczenia/Lab10/projekt/PCBuilder/Views/Cpu/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ3B1XEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/studia/studia/PZ2/laby/projekt/PCBuilder/Views/Gpu/Index.cshtml]
+[C:/Users/piotr/OneDrive/Desktop/studia/semestr 4/programowanie zaawansowane 2/ćwiczenia/Lab10/projekt/PCBuilder/Views/Gpu/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR3B1XEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/studia/studia/PZ2/laby/projekt/PCBuilder/Views/Home/Index.cshtml]
+[C:/Users/piotr/OneDrive/Desktop/studia/semestr 4/programowanie zaawansowane 2/ćwiczenia/Lab10/projekt/PCBuilder/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/studia/studia/PZ2/laby/projekt/PCBuilder/Views/Home/Privacy.cshtml]
+[C:/Users/piotr/OneDrive/Desktop/studia/semestr 4/programowanie zaawansowane 2/ćwiczenia/Lab10/projekt/PCBuilder/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/studia/studia/PZ2/laby/projekt/PCBuilder/Views/Memory/Index.cshtml]
+[C:/Users/piotr/OneDrive/Desktop/studia/semestr 4/programowanie zaawansowane 2/ćwiczenia/Lab10/projekt/PCBuilder/Views/Memory/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWVtb3J5XEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/studia/studia/PZ2/laby/projekt/PCBuilder/Views/Motherboard/Index.cshtml]
+[C:/Users/piotr/OneDrive/Desktop/studia/semestr 4/programowanie zaawansowane 2/ćwiczenia/Lab10/projekt/PCBuilder/Views/Motherboard/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTW90aGVyYm9hcmRcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/studia/studia/PZ2/laby/projekt/PCBuilder/Views/PowerSupply/Index.cshtml]
+[C:/Users/piotr/OneDrive/Desktop/studia/semestr 4/programowanie zaawansowane 2/ćwiczenia/Lab10/projekt/PCBuilder/Views/PowerSupply/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUG93ZXJTdXBwbHlcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/studia/studia/PZ2/laby/projekt/PCBuilder/Views/Shared/Error.cshtml]
+[C:/Users/piotr/OneDrive/Desktop/studia/semestr 4/programowanie zaawansowane 2/ćwiczenia/Lab10/projekt/PCBuilder/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/studia/studia/PZ2/laby/projekt/PCBuilder/Views/Shared/_ValidationScriptsPartial.cshtml]
+[C:/Users/piotr/OneDrive/Desktop/studia/semestr 4/programowanie zaawansowane 2/ćwiczenia/Lab10/projekt/PCBuilder/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/studia/studia/PZ2/laby/projekt/PCBuilder/Views/Storage/Index.cshtml]
+[C:/Users/piotr/OneDrive/Desktop/studia/semestr 4/programowanie zaawansowane 2/ćwiczenia/Lab10/projekt/PCBuilder/Views/Storage/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3RvcmFnZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/studia/studia/PZ2/laby/projekt/PCBuilder/Views/_ViewImports.cshtml]
+[C:/Users/piotr/OneDrive/Desktop/studia/semestr 4/programowanie zaawansowane 2/ćwiczenia/Lab10/projekt/PCBuilder/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/studia/studia/PZ2/laby/projekt/PCBuilder/Views/_ViewStart.cshtml]
+[C:/Users/piotr/OneDrive/Desktop/studia/semestr 4/programowanie zaawansowane 2/ćwiczenia/Lab10/projekt/PCBuilder/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/studia/studia/PZ2/laby/projekt/PCBuilder/Views/Shared/_Layout.cshtml]
+[C:/Users/piotr/OneDrive/Desktop/studia/semestr 4/programowanie zaawansowane 2/ćwiczenia/Lab10/projekt/PCBuilder/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-p5ixqyvyez

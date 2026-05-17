@@ -35,7 +35,7 @@ namespace PCBuilder.Controllers
 
             if (!string.IsNullOrEmpty(searchString))
             {
-                query = query.Where(s => s.Name.Contains(searchString) || s.Socket.Contains(searchString));
+                query = query.Where(s => (s.Name != null && s.Name.ToLower().Contains(searchString.ToLower())) || (s.Socket != null && s.Socket.ToLower().Contains(searchString.ToLower())));
             }
 
             return View(await query.ToListAsync());

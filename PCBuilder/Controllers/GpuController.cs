@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PCBuilder.Data;
 
+
 namespace PCBuilder.Controllers
 {
     public class GpuController : Controller
@@ -24,10 +25,10 @@ namespace PCBuilder.Controllers
             if (selectedCaseId != null)
             {
                 var selectedCase = await _context.Cases.FindAsync(selectedCaseId);
-                if (selectedCase != null && selectedCase.MaxGpuLengthMm.HasValue)
+                if (selectedCase != null)
                 {
                     // Pokazujemy tylko te karty, których długość jest mniejsza lub równa wolnej przestrzeni w obudowie
-                    query = query.Where(g => g.Length <= selectedCase.MaxGpuLengthMm.Value);
+                    query = query.Where(g => g.Length <= selectedCase.MaxGpuLengthMm);
                     ViewData["CompatibilityMessage"] = $"Filtrowanie aktywne: Pokazuję karty o długości do {selectedCase.MaxGpuLengthMm}mm pasujące do obudowy {selectedCase.Name}.";
                 }
             }
@@ -35,7 +36,7 @@ namespace PCBuilder.Controllers
             if (!string.IsNullOrEmpty(searchString))
             {
                 bool isNumber = double.TryParse(searchString, out double searchNumeric);
-                query = query.Where(s => s.Name.Contains(searchString) || s.Chipset.Contains(searchString) || (isNumber && s.Memory == searchNumeric));
+                query = query.Where(s => (s.Name != null && s.Name.ToLower().Contains(searchString.ToLower())) || (s.Chipset != null && s.Chipset.ToLower().Contains(searchString.ToLower())) || (isNumber && s.Memory == searchNumeric));
             }
 
             return View(await query.ToListAsync());

@@ -23,9 +23,9 @@ namespace PCBuilder.Controllers
                 bool isNumber = int.TryParse(searchString, out int searchNumeric);
 
                 query = query.Where(p => 
-                    p.Name.Contains(searchString) || 
-                    p.Efficiency.Contains(searchString) || 
-                    p.Type.Contains(searchString) ||
+                    (p.Name != null && p.Name.ToLower().Contains(searchString.ToLower())) || 
+                    (p.Efficiency != null && p.Efficiency.ToLower().Contains(searchString.ToLower())) || 
+                    (p.Type != null && p.Type.ToLower().Contains(searchString.ToLower())) ||
                     (isNumber && p.Wattage >= searchNumeric));
             }
 

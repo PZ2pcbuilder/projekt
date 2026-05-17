@@ -23,9 +23,9 @@ namespace PCBuilder.Controllers
                 bool isNumber = double.TryParse(searchString, out double searchNumeric);
 
                 query = query.Where(s => 
-                    s.Name.Contains(searchString) || 
-                    s.Type.Contains(searchString) || 
-                    s.Interface.Contains(searchString) ||
+                    (s.Name != null && s.Name.ToLower().Contains(searchString.ToLower())) || 
+                    (s.Type != null && s.Type.ToLower().Contains(searchString.ToLower())) || 
+                    (s.Interface != null && s.Interface.ToLower().Contains(searchString.ToLower())) ||
                     (isNumber && s.Capacity >= searchNumeric));
             }
 

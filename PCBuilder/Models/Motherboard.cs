@@ -19,19 +19,19 @@ namespace PCBuilder.Models
         // KLUCZ KOMPATYBILNOŚCI 2: Musi pasować do Case.SupportedMoboFormFactors
         public required string FormFactor { get; set; } // np. ATX, Micro ATX, Mini ITX
 
-        public int? MaxMemory { get; set; } // np. 128 lub 192 (GB)
+        public required int MaxMemory { get; set; } // np. 128 lub 192 (GB)
 
-        public int? MemorySlots { get; set; } // Zazwyczaj 2 lub 4
+        public required int MemorySlots { get; set; } // Zazwyczaj 2 lub 4
 
-        public string? Color { get; set; }
+        public required string Color { get; set; }
 
         // KLUCZ KOMPATYBILNOŚCI 3: Musi pasować do Cpu.MemoryType i Memory.MemoryType
         public required string MemoryType { get; set; } // DDR4 lub DDR5
 
         // Logika dodatkowa: limit dysków M.2
-        public int? M2Slots { get; set; }
+        public required int M2Slots { get; set; }
 
         // Logika dodatkowa: limit dysków SATA
-        public int? SataPorts { get; set; }
+        public required int SataPorts { get; set; }
     }
 }

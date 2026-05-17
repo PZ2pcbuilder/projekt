@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PCBuilder.Data;
-using System.Linq;
-using System.Threading.Tasks;
+
 
 namespace PCBuilder.Controllers
 {
@@ -15,7 +14,7 @@ namespace PCBuilder.Controllers
             _context = context;
         }
 
-        // GET: Case
+    // GET: Case
     public async Task<IActionResult> Index(string searchString)
     {
         ViewData["CurrentFilter"] = searchString;
@@ -28,8 +27,16 @@ namespace PCBuilder.Controllers
             var selectedMotherboard = await _context.Motherboards.FindAsync(selectedMotherboardId);
             if (selectedMotherboard != null && !string.IsNullOrEmpty(selectedMotherboard.FormFactor))
             {
-                // Szukamy obudów, które w stringu z formatami mają zapisany format naszej płyty
-                casesQuery = casesQuery.Where(c => c.SupportedMoboFormFactors.Contains(selectedMotherboard.FormFactor));
+                // 1. Zabezpieczamy to co wpisał użytkownik:
+                // Usuwamy spacje, dodajemy przecinki i zamieniamy wszystko na MAŁE litery (ToLower)
+                // Np. "Micro ATX" -> ",microatx,"
+                string searchFactor = "," + selectedMotherboard.FormFactor.Replace(" ", "").ToLower() + ",";
+
+                // 2. Szukamy w bazie stosując ten sam trik z dodaniem ToLower() dla kolumny bazy danych:
+                casesQuery = casesQuery.Where(c => 
+                    ("," + c.SupportedMoboFormFactors.Replace(" ", "").ToLower() + ",").Contains(searchFactor)
+                );
+                
                 ViewData["CompatibilityMessage"] = $"Pokazuję obudowy kompatybilne z formatem płyty głównej {selectedMotherboard.FormFactor} ({selectedMotherboard.Name}).";
             }
         }
@@ -49,7 +56,7 @@ namespace PCBuilder.Controllers
         if (!string.IsNullOrEmpty(searchString))
         {
             bool isNumber = double.TryParse(searchString, out double searchNumeric);
-            casesQuery = casesQuery.Where(c => c.Name.Contains(searchString) || c.Type.Contains(searchString) || (isNumber && c.MaxGpuLengthMm >= searchNumeric));
+            casesQuery = casesQuery.Where(c => (c.Name != null && EF.Functions.Like(c.Name!, $"%{searchString}%")) || (c.Type != null && c.Type.Contains(searchString)) || (isNumber && c.MaxGpuLengthMm >= searchNumeric));
         }
 
         return View(await casesQuery.OrderBy(c => c.Name).ToListAsync());

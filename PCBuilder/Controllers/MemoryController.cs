@@ -23,10 +23,10 @@ namespace PCBuilder.Controllers
                 bool isNumber = double.TryParse(searchString, out double searchNumeric);
 
                 query = query.Where(m => 
-                    m.Name.Contains(searchString) || 
-                    m.MemoryType.Contains(searchString) ||
-                    (isNumber && m.TotalCapacity == searchNumeric) || 
-                    (isNumber && m.Speed == searchNumeric)
+                    (m.Name != null && m.Name.ToLower().Contains(searchString.ToLower())) || 
+                    (m.MemoryType != null && m.MemoryType.ToLower().Contains(searchString.ToLower())) ||
+                    (isNumber && m.FirstWordLatency == searchNumeric) || 
+                    (isNumber && m.CasLatency == searchNumeric)
                 );
             }
 

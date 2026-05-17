@@ -13,7 +13,7 @@ namespace PCBuilder.Models
         public decimal? Price { get; set; }
 
         // Pojemność w GB (np. 1000.0 lub 2000.0)
-        public double Capacity { get; set; }
+        public double? Capacity { get; set; }
 
         public decimal? PricePerGb { get; set; }
 

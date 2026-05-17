@@ -23,9 +23,9 @@ namespace PCBuilder.Controllers
                 bool isNumber = double.TryParse(searchString, out double searchNumeric);
 
                 query = query.Where(c => 
-                    c.Name.Contains(searchString) || 
-                    c.SupportedSockets.Contains(searchString) ||
-                    c.Color.Contains(searchString) ||
+                    (c.Name != null && EF.Functions.Like(c.Name!, $"%{searchString}%")) || 
+                    (c.SupportedSockets != null && c.SupportedSockets.Contains(searchString)) ||
+                    (c.Color != null && c.Color.Contains(searchString)) ||
                     // Jeśli wpisano liczbę, szukaj chłodzeń o wysokości mniejszej lub równej (szukanie pod obudowę)
                     (isNumber && c.HeightMm <= searchNumeric)
                 );

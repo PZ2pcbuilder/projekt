@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
+
 namespace PCBuilder.Models
 {
     public class Gpu
@@ -21,7 +22,7 @@ namespace PCBuilder.Models
 
         public double? BoostClock { get; set; } // w MHz
 
-        public required string Color { get; set; }
+        public string? Color { get; set; }
 
         // KLUCZ KOMPATYBILNOŚCI 1: Długość karty w mm
         // Sprawdzamy, czy Gpu.Length <= Case.MaxGpuLengthMm
@@ -29,7 +30,7 @@ namespace PCBuilder.Models
 
         // KLUCZ LOGIKI 1: Zalecana moc zasilacza
         // Można wyświetlić ostrzeżenie, jeśli PowerSupply.Wattage < Gpu.RecommendedPsuW
-        public int? RecommendedPsuW { get; set; }
+        public required int RecommendedPsuW { get; set; }
 
         public required string PowerConnectors { get; set; } // np. "1x 12VHPWR" lub "2x 8-pin"
     }

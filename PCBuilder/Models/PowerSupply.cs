@@ -14,21 +14,21 @@ namespace PCBuilder.Models
 
         public required string Type { get; set; } // np. ATX
 
-        public required string Efficiency { get; set; } // np. Gold, Bronze, Platinum
+        public string? Efficiency { get; set; } // np. Gold, Bronze, Platinum
 
         // KLUCZ LOGIKI 1: Całkowita moc zasilacza
         // Pozwala sprawdzić, czy suma TDP procesora i karty graficznej nie przekracza mocy
-        public int Wattage { get; set; }
+        public required int Wattage { get; set; }
 
         // Czy zasilacz jest modularny (Full, Semi, false)
         public required string Modular { get; set; }
 
-        public required string Color { get; set; }
+        public string? Color { get; set; }
 
         // KLUCZ KOMPATYBILNOŚCI 1: Musi pasować do Case.PsuFormFactor
         public required string FormFactor { get; set; } // np. ATX, SFX
 
         // Liczba wtyczek do karty graficznej
-        public int? Pcie6Plus2Connectors { get; set; }
+        public required int Pcie6Plus2Connectors { get; set; }
     }
 }

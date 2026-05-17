@@ -59,7 +59,7 @@
                             <span class="fw-bold @effClass">@item.Efficiency</span>
                         </td>
                         <td class="text-center">
-                            <span class="badge @(item.Modular == "Full" ? "bg-success" : "bg-secondary")">
+                            <span class="badge @(item.Modular switch { "Full" => "bg-success", "Semi" => "bg-warning", _ => "bg-secondary" })">
                                 @item.Modular
                             </span>
                         </td>

@@ -12,7 +12,7 @@ namespace PCBuilder.Models
 
         public decimal? Price { get; set; }
 
-        public int CoreCount { get; set; }
+        public required int CoreCount { get; set; }
 
         // Przechowujemy jako string, bo w CSV mogą być wartości typu "4.7" lub "3.8 GHz"
         public required string CoreClock { get; set; }
@@ -21,9 +21,9 @@ namespace PCBuilder.Models
 
         public required string Microarchitecture { get; set; }
 
-        public int? Tdp { get; set; } // Thermal Design Power w Watach
+        public required int Tdp { get; set; } // Thermal Design Power w Watach
 
-        public required string Graphics { get; set; } // Zintegrowana karta graficzna (może być puste)
+        public string? Graphics { get; set; } // Zintegrowana karta graficzna (może być puste)
 
         // KLUCZ KOMPATYBILNOŚCI 1: Musi pasować do Motherboard.Socket
         [Required]

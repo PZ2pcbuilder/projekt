@@ -49,10 +49,10 @@
                             <small class="text-muted">Kolor: @item.Color</small>
                         </td>
                         <td class="text-center">
-                            <span class="badge bg-light text-dark border">@item.Rpm</span>
+                            <span class="badge bg-light text-dark border">@(!string.IsNullOrEmpty(item.Rpm) ? item.Rpm.Replace("\"", "") : "N/A")</span>
                         </td>
                         <td class="text-center">
-                            <span class="text-info"><i class="bi bi-volume-up"></i> @item.NoiseLevel</span>
+                            <span class="text-info"><i class="bi bi-volume-up"></i> @(!string.IsNullOrEmpty(item.NoiseLevel) ? item.NoiseLevel.Replace("\"", "") : "N/A")</span>
                         </td>
                         <td class="text-center">
                             <span class="fw-bold">@(item.HeightMm)mm</span>
@@ -65,7 +65,7 @@
                                     var sockets = item.SupportedSockets.Replace("[", "").Replace("]", "").Replace("'", "").Split(',');
                                     foreach (var s in sockets.Take(3)) // Pokaż pierwsze 3, reszta po najechaniu lub skrócona
                                     {
-                                        <span class="badge bg-secondary mb-1">@s.Trim()</span>
+                                        <span class="badge bg-secondary mb-1">@s.Replace("\"", "").Trim()</span>
                                     }
                                     if (sockets.Length > 3) { <span>...</span> }
                                 }

@@ -1,8 +1,8 @@
 using PCBuilder.Models;
 using System.Globalization;
-using System.IO;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Identity;
+
 
 namespace PCBuilder.Data
 {
@@ -34,7 +34,7 @@ namespace PCBuilder.Data
                         CoreClock = p[3],
                         BoostClock = p[4],
                         Microarchitecture = p[5],
-                        Tdp = int.TryParse(p[6], out int tdp) ? tdp : null,
+                        Tdp = int.TryParse(p[6], out int tdp) ? tdp : 0,
                         Graphics = p[7],
                         Socket = p[8],
                         MemoryType = p[9]
@@ -42,7 +42,7 @@ namespace PCBuilder.Data
                 }
             }
 
-            // --- 2. MEMORY (Dopasowane do Twojego CSV: name,price,speed,price_per_gb,color,lat1,lat2,type,cap,count) ---
+            // --- 2. MEMORY (Dopasowane do Twojego CSV: name,price,speed,modules,price_per_gb,color,lat1,lat2,type) ---
             if (File.Exists(Path.Combine(dataPath, "memory.csv")))
             {
                 var lines = File.ReadAllLines(Path.Combine(dataPath, "memory.csv")).Skip(1);
@@ -52,10 +52,13 @@ namespace PCBuilder.Data
                     context.Memories.Add(new Memory {
                         Name = p[0],
                         Price = ParseDecimal(p[1]),
-                        Speed = int.TryParse(p[2],out int sp) ? sp:0,
-                        MemoryType = p[7], // 8. kolumna (indeks 7)
-                        TotalCapacity = ParseDouble(p[8]) ?? 0, // 9. kolumna (indeks 8)
-                        ModuleCount = int.TryParse(p[9], out int mc) ? mc : 1 // 10. kolumna (indeks 9)
+                        Speed = p[2],
+                        Modules = p[3],
+                        PricePerGb = ParseDecimal(p[4]),
+                        Color = p[5],
+                        FirstWordLatency = ParseDouble(p[6]),
+                        CasLatency = ParseDouble(p[7]),
+                        MemoryType = p[8], // 8. kolumna (indeks 7)
                     });
                 }
             }
@@ -76,7 +79,7 @@ namespace PCBuilder.Data
                         BoostClock = ParseDouble(p[5]),
                         Color = p[6],
                         Length = ParseDouble(p[7]),
-                        RecommendedPsuW = int.TryParse(p[8], out int rpsu) ? rpsu : null,
+                        RecommendedPsuW = int.TryParse(p[8], out int rpsu) ? rpsu : 0,
                         PowerConnectors = p[9]
                     });
                 }
@@ -94,11 +97,12 @@ namespace PCBuilder.Data
                         Price = ParseDecimal(p[1]),
                         Socket = p[2],
                         FormFactor = p[3],
-                        MaxMemory = int.TryParse(p[4], out int mm) ? mm : null,
-                        MemorySlots = int.TryParse(p[5], out int ms) ? ms : null,
+                        MaxMemory = int.TryParse(p[4], out int mm) ? mm : -1,
+                        MemorySlots = int.TryParse(p[5], out int ms) ? ms : -1,
+                        Color = p[6],
                         MemoryType = p[7],
-                        M2Slots = int.TryParse(p[8], out int m2) ? m2 : null,
-                        SataPorts = int.TryParse(p[9], out int sata) ? sata : null
+                        M2Slots = int.TryParse(p[8], out int m2) ? m2 : -1,
+                        SataPorts = int.TryParse(p[9], out int sata) ? sata : -1
                     });
                 }
             }
@@ -118,7 +122,7 @@ namespace PCBuilder.Data
                         Psu = p[4],
                         SidePanel = p[5],
                         ExternalVolume = ParseDouble(p[6]),
-                        Internal35Bays = int.TryParse(p[7], out int bays) ? bays : null,
+                        Internal35Bays = int.TryParse(p[7], out int bays) ? bays : -1,
                         SupportedMoboFormFactors = p[8],
                         MaxGpuLengthMm = ParseDouble(p[9]),
                         MaxCpuCoolerHeightMm = ParseDouble(p[10]),
@@ -143,7 +147,7 @@ namespace PCBuilder.Data
                         Modular = p[5],
                         Color = p[6],
                         FormFactor = p[7],
-                        Pcie6Plus2Connectors = int.TryParse(p[8], out int conn) ? conn : null
+                        Pcie6Plus2Connectors = int.TryParse(p[8], out int conn) ? conn : -1
                     });
                 }
             }
@@ -158,7 +162,7 @@ namespace PCBuilder.Data
                     context.Storages.Add(new Storage {
                         Name = p[0],
                         Price = ParseDecimal(p[1]),
-                        Capacity = ParseDouble(p[2]) ?? 0,
+                        Capacity = ParseDouble(p[2]),
                         PricePerGb = ParseDecimal(p[3]),
                         Type = p[4],
                         Cache = ParseDouble(p[5]),
@@ -183,10 +187,11 @@ namespace PCBuilder.Data
                         Color = p[4],
                         Size = ParseDouble(p[5]),
                         SupportedSockets = p[6],
-                        HeightMm = ParseDouble(p[7])
+                        HeightMm = int.TryParse(p[7], out int height) ? height : -1
                     });
                 }
             }
+
             // Users
             if (!context.Users.Any(u => u.Username == "admin"))
                 {
@@ -200,7 +205,8 @@ namespace PCBuilder.Data
                     
                     context.Users.Add(admin);
                 }
-             context.SaveChanges();
+
+            context.SaveChanges();
         }
 
         private static string[] SplitCsv(string line)

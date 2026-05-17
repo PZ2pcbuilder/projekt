@@ -62,7 +62,7 @@
                             <div style="max-width: 200px; margin: auto;">
                                 @if (!string.IsNullOrEmpty(item.SupportedMoboFormFactors))
                                 {
-                                    @foreach (var form in item.SupportedMoboFormFactors.Replace("[", "").Replace("]", "").Replace("'", "").Split(','))
+                                    @foreach (var form in item.SupportedMoboFormFactors.Replace("\"", "").Split(','))
                                     {
                                         <span class="badge bg-secondary mb-1" style="font-size: 0.7rem;">@form.Trim()</span>
                                     }

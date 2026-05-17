@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\studia\\studia\\PZ2\\laby\\projekt\\PCBuilder\\PCBuilder.csproj": {}
+    "C:\\Users\\piotr\\OneDrive\\Desktop\\studia\\semestr 4\\programowanie zaawansowane 2\\ćwiczenia\\Lab10\\projekt\\PCBuilder\\PCBuilder.csproj": {}
   },
   "projects": {
-    "D:\\studia\\studia\\PZ2\\laby\\projekt\\PCBuilder\\PCBuilder.csproj": {
+    "C:\\Users\\piotr\\OneDrive\\Desktop\\studia\\semestr 4\\programowanie zaawansowane 2\\ćwiczenia\\Lab10\\projekt\\PCBuilder\\PCBuilder.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\studia\\studia\\PZ2\\laby\\projekt\\PCBuilder\\PCBuilder.csproj",
+        "projectUniqueName": "C:\\Users\\piotr\\OneDrive\\Desktop\\studia\\semestr 4\\programowanie zaawansowane 2\\ćwiczenia\\Lab10\\projekt\\PCBuilder\\PCBuilder.csproj",
         "projectName": "PCBuilder",
-        "projectPath": "D:\\studia\\studia\\PZ2\\laby\\projekt\\PCBuilder\\PCBuilder.csproj",
-        "packagesPath": "C:\\Users\\jbial\\.nuget\\packages\\",
-        "outputPath": "D:\\studia\\studia\\PZ2\\laby\\projekt\\PCBuilder\\obj\\",
+        "projectPath": "C:\\Users\\piotr\\OneDrive\\Desktop\\studia\\semestr 4\\programowanie zaawansowane 2\\ćwiczenia\\Lab10\\projekt\\PCBuilder\\PCBuilder.csproj",
+        "packagesPath": "C:\\Users\\piotr\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\piotr\\OneDrive\\Desktop\\studia\\semestr 4\\programowanie zaawansowane 2\\ćwiczenia\\Lab10\\projekt\\PCBuilder\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\jbial\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\piotr\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
