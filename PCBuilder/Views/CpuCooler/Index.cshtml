@@ -1,14 +1,21 @@
 @model IEnumerable<PCBuilder.Models.CpuCooler>
 
 @{
-    ViewData["Title"] = "Chłodzenia CPU";
+    ViewData["Title"] = "Chłodzenie procesora";
 }
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="display-5"><i class="bi bi-snow"></i> Chłodzenia CPU</h1>
+        <h1 class="display-5"><i class="bi bi-snow"></i> Chłodzenie procesora</h1>
         <span class="badge bg-secondary">Liczba pozycji: @Model.Count()</span>
     </div>
+
+    @if (ViewData["CompatibilityMessage"] != null)
+    {
+        <div class="alert alert-info shadow-sm mb-4">
+            <i class="bi bi-info-circle-fill me-2"></i> @ViewData["CompatibilityMessage"]
+        </div>
+    }
 
     <div class="card shadow-sm mb-4">
         <div class="card-body">
@@ -16,7 +23,7 @@
                 <div class="col-md-6">
                     <div class="input-group">
                         <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
-                        <input type="text" name="searchString" class="form-control" placeholder="Szukaj po nazwie, sockecie lub max wysokości..." value="@ViewData["CurrentFilter"]" />
+                        <input type="text" name="searchString" class="form-control" placeholder="Szukaj po nazwie lub gnieździe (np. AM5, LGA1700)..." value="@ViewData["CurrentFilter"]" />
                         <button type="submit" class="btn btn-primary">Filtruj</button>
                     </div>
                 </div>
@@ -32,10 +39,10 @@
             <thead class="table-dark">
                 <tr>
                     <th>Model i Kolor</th>
-                    <th class="text-center">Obroty (RPM)</th>
-                    <th class="text-center">Głośność</th>
                     <th class="text-center">Wysokość</th>
-                    <th class="text-center">Obsługiwane sockety</th>
+                    <th class="text-center">Prędkość (RPM)</th>
+                    <th class="text-center">Głośność</th>
+                    <th>Obsługiwane gniazda (Sockets)</th>
                     <th class="text-end">Cena</th>
                     <th></th>
                 </tr>
@@ -46,61 +53,35 @@
                     <tr>
                         <td>
                             <div class="fw-bold">@item.Name</div>
-                            <small class="text-muted">Kolor: @item.Color</small>
+                            <small class="text-muted">Kolor: @(string.IsNullOrEmpty(item.Color) ? "Standard" : item.Color)</small>
                         </td>
                         <td class="text-center">
-                            <span class="badge bg-light text-dark border">@(!string.IsNullOrEmpty(item.Rpm) ? item.Rpm.Replace("\"", "") : "N/A")</span>
+                            <span class="badge bg-light text-dark border fw-bold">@item.HeightMm mm</span>
                         </td>
-                        <td class="text-center">
-                            <span class="text-info"><i class="bi bi-volume-up"></i> @(!string.IsNullOrEmpty(item.NoiseLevel) ? item.NoiseLevel.Replace("\"", "") : "N/A")</span>
+                        <td class="text-center text-muted small">
+                            @(item.Rpm)
                         </td>
-                        <td class="text-center">
-                            <span class="fw-bold">@(item.HeightMm)mm</span>
+                        <td class="text-center small">
+                            @(item.NoiseLevel) dBa
                         </td>
-                        <td class="text-center">
-                            <div style="max-width: 250px; margin: auto; font-size: 0.75rem;">
-                                @if (!string.IsNullOrEmpty(item.SupportedSockets))
-                                {
-                                    // Zakładając, że sockety są oddzielone przecinkami lub są w formacie listy
-                                    var sockets = item.SupportedSockets.Replace("[", "").Replace("]", "").Replace("'", "").Split(',');
-                                    foreach (var s in sockets.Take(3)) // Pokaż pierwsze 3, reszta po najechaniu lub skrócona
-                                    {
-                                        <span class="badge bg-secondary mb-1">@s.Replace("\"", "").Trim()</span>
-                                    }
-                                    if (sockets.Length > 3) { <span>...</span> }
-                                }
-                            </div>
+                        <td>
+                            <span class="text-wrap small text-secondary">@item.SupportedSockets</span>
                         </td>
                         <td class="text-end fw-bold text-success">
                             @(item.Price?.ToString("C") ?? "N/A")
                         </td>
                         <td class="text-end">
-                            <button class="btn btn-sm btn-outline-primary" title="Dodaj do konfiguracji">
-                                <i class="bi bi-plus-lg"></i>
-                            </button>
+                            <form asp-controller="Configuration" asp-action="AddComponent" method="post">
+                                <input type="hidden" name="type" value="CpuCooler" />
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <button type="submit" class="btn btn-sm btn-outline-primary" title="Dodaj do konfiguracji">
+                                    <i class="bi bi-plus-lg"></i>
+                                </button>
+                            </form>
                         </td>
                     </tr>
                 }
             </tbody>
         </table>
     </div>
-
-    @if (!Model.Any())
-    {
-        <div class="alert alert-warning mt-4 text-center">
-            Nie znaleziono chłodzeń spełniających te kryteria.
-        </div>
-    }
 </div>
-
-<style>
-    .table thead th {
-        font-weight: 500;
-        text-transform: uppercase;
-        font-size: 0.85rem;
-        letter-spacing: 0.05em;
-    }
-    .table-hover tbody tr:hover {
-        background-color: rgba(0, 123, 255, 0.05);
-    }
-</style>

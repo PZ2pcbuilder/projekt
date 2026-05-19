@@ -28,8 +28,7 @@ namespace PCBuilder.Models
         // Sprawdzamy, czy Gpu.Length <= Case.MaxGpuLengthMm
         public int? Length { get; set; }
 
-        // KLUCZ LOGIKI 1: Zalecana moc zasilacza
-        // Można wyświetlić ostrzeżenie, jeśli PowerSupply.Wattage < Gpu.RecommendedPsuW
+
         public required int RecommendedPsuW { get; set; }
 
         public required string PowerConnectors { get; set; } // np. "1x 12VHPWR" lub "2x 8-pin"

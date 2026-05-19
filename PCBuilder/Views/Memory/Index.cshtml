@@ -10,6 +10,13 @@
         <span class="badge bg-secondary">Liczba pozycji: @Model.Count()</span>
     </div>
 
+    @if (ViewData["CompatibilityMessage"] != null)
+    {
+        <div class="alert alert-info shadow-sm mb-4">
+            <i class="bi bi-info-circle-fill me-2"></i> @ViewData["CompatibilityMessage"]
+        </div>
+    }
+
     <div class="card shadow-sm mb-4">
         <div class="card-body">
             <form asp-action="Index" method="get" class="row g-3">
@@ -31,12 +38,12 @@
         <table class="table table-hover align-middle mb-0">
             <thead class="table-dark">
                 <tr>
-                    <th>Model</th>
+                    <th>Model i Kolor</th>
                     <th class="text-center">Typ</th>
                     <th class="text-center">Pojemność</th>
-                    <th class="text-center">Prędkość</th>
-                    <th class="text-center">Cena</th>
-                    <th class="text-end">Konfiguracja</th>
+                    <th class="text-center">Taktowanie</th>
+                    <th class="text-center">Liczba modułów</th>
+                    <th class="text-end">Cena</th>
                     <th></th>
                 </tr>
             </thead>
@@ -46,38 +53,37 @@
                     <tr>
                         <td>
                             <div class="fw-bold">@item.Name</div>
+                            <small class="text-muted">Kolor: @item.Color</small>
                         </td>
                         <td class="text-center">
                             <span class="badge bg-info text-dark">@item.MemoryType</span>
                         </td>
                         <td class="text-center">
-                            <span class="text-muted">@item.Capacity</span>
+                            <span class="fw-bold">@(item.Capacity) GB</span>
                         </td>
                         <td class="text-center">
-                            <span class="badge bg-light text-dark border">
-                                @item.Speed
-                            </span>
+                            <span class="text-muted">@item.Speed</span>
+                        </td>
+                        <td class="text-center">
+                            <span class="badge bg-light text-dark border">@item.Modules szt.</span>
                         </td>
                         <td class="text-end fw-bold text-success">
                             @(item.Price?.ToString("C") ?? "N/A")
                         </td>
                         <td class="text-end">
-                            <button class="btn btn-sm btn-outline-primary" title="Dodaj do konfiguracji">
-                                <i class="bi bi-plus-lg"></i>
-                            </button>
+                            <form asp-controller="Configuration" asp-action="AddComponent" method="post">
+                                <input type="hidden" name="type" value="Memory" />
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <button type="submit" class="btn btn-sm btn-outline-primary" title="Dodaj do konfiguracji">
+                                    <i class="bi bi-plus-lg"></i>
+                                </button>
+                            </form>
                         </td>
                     </tr>
                 }
             </tbody>
         </table>
     </div>
-
-    @if (!Model.Any())
-    {
-        <div class="alert alert-warning mt-4 text-center">
-            Nie znaleziono pamięci RAM spełniających kryteria.
-        </div>
-    }
 </div>
 
 <style>

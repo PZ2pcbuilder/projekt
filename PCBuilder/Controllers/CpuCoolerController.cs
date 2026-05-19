@@ -18,20 +18,43 @@ namespace PCBuilder.Controllers
             ViewData["CurrentFilter"] = searchString;
             var query = _context.CpuCoolers.AsQueryable();
 
-            if (!string.IsNullOrEmpty(searchString))
+            // --- KOMPATYBILNOŚĆ: CHŁODZENIE vs PROCESOR ---
+            int? selectedCpuId = HttpContext.Session.GetInt32("SelectedCpuId");
+            if (selectedCpuId != null)
             {
-                bool isNumber = double.TryParse(searchString, out double searchNumeric);
-
-                query = query.Where(c => 
-                    (c.Name != null && EF.Functions.Like(c.Name!, $"%{searchString}%")) || 
-                    (c.SupportedSockets != null && c.SupportedSockets.Contains(searchString)) ||
-                    (c.Color != null && c.Color.Contains(searchString)) ||
-                    // Jeśli wpisano liczbę, szukaj chłodzeń o wysokości mniejszej lub równej (szukanie pod obudowę)
-                    (isNumber && c.HeightMm <= searchNumeric)
-                );
+                var selectedCpu = await _context.Cpus.FindAsync(selectedCpuId);
+                if (selectedCpu != null && !string.IsNullOrEmpty(selectedCpu.Socket))
+                {
+                    // Sprawdzamy, czy string z obsługiwanymi socketami zawiera socket wybranego CPU
+                    query = query.Where(cc => cc.SupportedSockets.Contains(selectedCpu.Socket));
+                    ViewData["CompatibilityMessage"] = $"Pokazuję chłodzenia kompatybilne z socketem {selectedCpu.Socket} ({selectedCpu.Name}).";
+                }
             }
 
-            var result = await query.OrderBy(c => c.Name).ToListAsync();
+            // --- KOMPATYBILNOŚĆ: CHŁODZENIE vs OBUDOWA ---
+            int? selectedCaseId = HttpContext.Session.GetInt32("SelectedCaseId");
+            if (selectedCaseId != null)
+            {
+                var selectedCase = await _context.Cases.FindAsync(selectedCaseId);
+                if (selectedCase != null && selectedCase.MaxCpuCoolerHeightMm.HasValue)
+                {
+                    // Wysokość chłodzenia musi być mniejsza bądź równa maksymalnej dopuszczalnej w obudowie
+                    query = query.Where(cc => cc.HeightMm <= selectedCase.MaxCpuCoolerHeightMm.Value);
+                    
+                    ViewData["CompatibilityMessage"] = (ViewData["CompatibilityMessage"] != null ? ViewData["CompatibilityMessage"] + " oraz " : "") + 
+                        $"mieszczące się w obudowie {selectedCase.Name} (wysokość do {selectedCase.MaxCpuCoolerHeightMm}mm).";
+                }
+            }
+
+            // --- WYSZUKIWANIE TEKSTOWE ---
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                query = query.Where(cc => 
+                    cc.Name.ToLower().Contains(searchString.ToLower()) || 
+                    cc.SupportedSockets.ToLower().Contains(searchString.ToLower()));
+            }
+
+            var result = await query.OrderBy(cc => cc.Name).ToListAsync();
             return View(result);
         }
     }

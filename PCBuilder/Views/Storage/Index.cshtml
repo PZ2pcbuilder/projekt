@@ -1,14 +1,21 @@
 @model IEnumerable<PCBuilder.Models.Storage>
 
 @{
-    ViewData["Title"] = "Dyski twarde i SSD";
+    ViewData["Title"] = "Pamięć masowa (Dyski)";
 }
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="display-5"><i class="bi bi-hdd-stack"></i> Pamięć masowa (Storage)</h1>
-        <span class="badge bg-secondary">Liczba pozycji: @Model.Count()</span>
+        <h1 class="display-5"><i class="bi bi-hdd-rack"></i> Pamięć masowa (Dyski)</h1>
+        <span class="badge bg-secondary">Dostępnych: @Model.Count()</span>
     </div>
+
+    @if (ViewData["CompatibilityMessage"] != null)
+    {
+        <div class="alert alert-info shadow-sm mb-4">
+            <i class="bi bi-info-circle-fill me-2"></i> @ViewData["CompatibilityMessage"]
+        </div>
+    }
 
     <div class="card shadow-sm mb-4">
         <div class="card-body">
@@ -16,12 +23,12 @@
                 <div class="col-md-6">
                     <div class="input-group">
                         <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
-                        <input type="text" name="searchString" class="form-control" placeholder="Szukaj po nazwie, typie (SSD/HDD) lub min. pojemności (GB)..." value="@ViewData["CurrentFilter"]" />
+                        <input type="text" name="searchString" class="form-control" placeholder="Szukaj po nazwie, typie (SSD/HDD) lub interfejsie (NVMe/SATA)..." value="@ViewData["CurrentFilter"]" />
                         <button type="submit" class="btn btn-primary">Filtruj</button>
                     </div>
                 </div>
                 <div class="col-md-6 text-end">
-                    <a asp-action="Index" class="btn btn-outline-secondary">Wyczyść</a>
+                    <a asp-action="Index" class="btn btn-outline-secondary">Wyczyść filtry</a>
                 </div>
             </form>
         </div>
@@ -31,11 +38,11 @@
         <table class="table table-hover align-middle mb-0">
             <thead class="table-dark">
                 <tr>
-                    <th>Model</th>
+                    <th>Model / Nazwa</th>
                     <th class="text-center">Typ</th>
                     <th class="text-center">Pojemność</th>
-                    <th class="text-center">Interfejs / Format</th>
-                    <th class="text-center">Cena za GB</th>
+                    <th class="text-center">Interfejs</th>
+                    <th class="text-center">Format fizyczny</th>
                     <th class="text-end">Cena</th>
                     <th></th>
                 </tr>
@@ -46,57 +53,46 @@
                     <tr>
                         <td>
                             <div class="fw-bold">@item.Name</div>
-                            <small class="text-muted">Cache: @(item.Cache ?? 0) MB</small>
                         </td>
                         <td class="text-center">
-                            <span class="badge @(item.Type?.Contains("SSD") == true ? "bg-success" : "bg-warning text-dark")">
-                                @item.Type
-                            </span>
+                            <span class="badge @(item.Type == "SSD" ? "bg-success" : "bg-warning text-dark")">@item.Type</span>
                         </td>
-                        <td class="text-center">
-                            <span class="fw-bold fs-6">
-                                @(item.Capacity + " GB")
-                            </span>
+                        <td class="text-center fw-bold">
+                            @item.Capacity
                         </td>
-                        <td class="text-center">
-                            <div class="small">
-                                <strong>@item.Interface</strong><br />
-                                <span class="text-muted">@item.FormFactor</span>
-                            </div>
+                        <td class="text-center text-muted small">
+                            @item.Interface
                         </td>
-                        <td class="text-center small text-muted">
-                            @(item.PricePerGb?.ToString("C") ?? "N/A") / GB
+                        <td class="text-center small">
+                            @item.FormFactor
                         </td>
                         <td class="text-end fw-bold text-success">
                             @(item.Price?.ToString("C") ?? "N/A")
                         </td>
                         <td class="text-end">
-                            <button class="btn btn-sm btn-outline-primary" title="Dodaj do konfiguracji">
-                                <i class="bi bi-plus-lg"></i>
-                            </button>
+                            <form asp-controller="Configuration" asp-action="AddComponent" method="post">
+                                <input type="hidden" name="type" value="Storage" />
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <button type="submit" class="btn btn-sm btn-outline-primary" title="Dodaj ten dysk do komputera">
+                                    <i class="bi bi-plus-lg"></i>
+                                </button>
+                            </form>
                         </td>
                     </tr>
                 }
             </tbody>
         </table>
     </div>
-
-    @if (!Model.Any())
-    {
-        <div class="alert alert-warning mt-4 text-center">
-            Nie znaleziono dysków spełniających kryteria.
-        </div>
-    }
 </div>
 
 <style>
-    .table thead th {
+    .table th {
         font-weight: 500;
         text-transform: uppercase;
-        font-size: 0.85rem;
+        font-size: 0.82rem;
         letter-spacing: 0.05em;
     }
     .table-hover tbody tr:hover {
-        background-color: rgba(0, 123, 255, 0.05);
+        background-color: rgba(40, 167, 69, 0.04);
     }
 </style>

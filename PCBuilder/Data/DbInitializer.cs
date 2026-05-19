@@ -3,14 +3,12 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Identity;
 
-
 namespace PCBuilder.Data
 {
     public static class DbInitializer
     {
         public static void Initialize(ApplicationDbContext context)
         {
-            
             context.Database.EnsureCreated();
 
             Console.WriteLine(">>> Baza danych została stworzona na nowo.");
@@ -18,7 +16,6 @@ namespace PCBuilder.Data
             // Teraz importowanie danych...
             string dataPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "data");
             if (context.Cpus.Any()) return;
-
 
             // --- 1. CPU ---
             if (File.Exists(Path.Combine(dataPath, "cpu.csv")))
@@ -30,7 +27,7 @@ namespace PCBuilder.Data
                     context.Cpus.Add(new Cpu {
                         Name = p[0],
                         Price = ParseDecimal(p[1]),
-                        CoreCount = int.Parse(p[2]),
+                        CoreCount = ParseInt(p[2]) ?? 0, // Bezpieczne parsowanie
                         CoreClock = p[3],
                         BoostClock = p[4],
                         Microarchitecture = p[5],
@@ -42,7 +39,7 @@ namespace PCBuilder.Data
                 }
             }
 
-            // --- 2. MEMORY (Dopasowane do Twojego CSV: name,price,speed,modules,price_per_gb,color,lat1,lat2,type) ---
+            // --- 2. MEMORY ---
             if (File.Exists(Path.Combine(dataPath, "memory.csv")))
             {
                 var lines = File.ReadAllLines(Path.Combine(dataPath, "memory.csv")).Skip(1);
@@ -52,10 +49,10 @@ namespace PCBuilder.Data
                     context.Memories.Add(new Memory {
                         Name = p[0],
                         Price = ParseDecimal(p[1]),
-                        Speed = int.Parse(p[2]),
+                        Speed = ParseInt(p[2]) ?? 0, // Bezpieczne parsowanie
                         Color = p[3],
-                        MemoryType = p[4], // 8. kolumna (indeks 7)
-                        Capacity = int.Parse(p[5]),
+                        MemoryType = p[4],
+                        Capacity = ParseInt(p[5]) ?? 0, // Bezpieczne parsowanie
                         Modules = p[6],
                     });
                 }
@@ -72,11 +69,11 @@ namespace PCBuilder.Data
                         Name = p[0],
                         Price = ParseDecimal(p[1]),
                         Chipset = p[2],
-                        Memory = int.Parse(p[3]),
-                        CoreClock = int.Parse(p[4]),
-                        BoostClock = int.Parse(p[5]),
+                        Memory = ParseInt(p[3]) ?? 0, // Ładniejszy i bezpieczny zapis
+                        CoreClock = ParseInt(p[4]) ?? 0,
+                        BoostClock = ParseInt(p[5]) ?? 0,
                         Color = p[6],
-                        Length = int.Parse(p[7]),
+                        Length = ParseInt(p[7]) ?? 0,
                         RecommendedPsuW = int.TryParse(p[8], out int rpsu) ? rpsu : 0,
                         PowerConnectors = p[9]
                     });
@@ -158,9 +155,9 @@ namespace PCBuilder.Data
                     context.Storages.Add(new Storage {
                         Name = p[0],
                         Price = ParseDecimal(p[1]),
-                        Capacity = int.Parse(p[2]),
+                        Capacity = ParseInt(p[2]) ?? 0, // <-- TUTAJ BYŁ BŁĄD ('2000.0'), TERAZ JEST NAPRAWIONY
                         Type = p[3],
-                        Cache = int.Parse(p[4]),
+                        Cache = ParseInt(p[4]) ?? 0,   // Bezpieczne parsowanie
                         FormFactor = p[5],
                         Interface = p[6]
                     });
@@ -177,10 +174,10 @@ namespace PCBuilder.Data
                     context.CpuCoolers.Add(new CpuCooler {
                         Name = p[0],
                         Price = ParseDecimal(p[1]),
-                        Rpm = int.Parse(p[2]),
+                        Rpm = ParseInt(p[2]) ?? 0,     // Bezpieczne parsowanie
                         NoiseLevel = ParseDouble(p[3]),
                         Color = p[4],
-                        Size = int.Parse(p[5]),
+                        Size = ParseInt(p[5]) ?? 0,    // Bezpieczne parsowanie
                         SupportedSockets = p[6],
                         HeightMm = int.TryParse(p[7], out int height) ? height : -1
                     });
@@ -189,17 +186,17 @@ namespace PCBuilder.Data
 
             // Users
             if (!context.Users.Any(u => u.Username == "admin"))
+            {
+                var admin = new User
                 {
-                    var admin = new User
-                    {
-                        Username = "admin",
-                        Role = "Admin",
-                        ApiToken = Guid.NewGuid().ToString(),
-                        PasswordHash = new PasswordHasher<User>().HashPassword(null!, "admin")
-                    };
-                    
-                    context.Users.Add(admin);
-                }
+                    Username = "admin",
+                    Role = "Admin",
+                    ApiToken = Guid.NewGuid().ToString(),
+                    PasswordHash = new PasswordHasher<User>().HashPassword(null!, "admin")
+                };
+                
+                context.Users.Add(admin);
+            }
 
             context.SaveChanges();
         }
@@ -222,6 +219,19 @@ namespace PCBuilder.Data
             if (string.IsNullOrWhiteSpace(value) || value.ToLower() == "null") return null;
             value = value.Replace("\"", "").Trim();
             if (double.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out double res)) return res;
+            return null;
+        }
+
+        // NOWA METODA POMOCNICZA – parsuje liczby z kropką jako double (względem InvariantCulture), 
+        // a potem bezpiecznie rzutuje (obcina) do int.
+        private static int? ParseInt(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value) || value.ToLower() == "null") return null;
+            value = value.Replace("\"", "").Trim();
+            if (double.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out double res)) 
+            {
+                return (int)res;
+            }
             return null;
         }
     }

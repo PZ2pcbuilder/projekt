@@ -19,7 +19,19 @@ namespace PCBuilder.Controllers
     {
         ViewData["CurrentFilter"] = searchString;
         var casesQuery = _context.Cases.AsQueryable();
-
+        // --- KOMPATYBILNOŚĆ: OBUDOWA vs CHŁODZENIE CPU ---
+        int? selectedCpuCoolerId = HttpContext.Session.GetInt32("SelectedCpuCoolerId");
+        if (selectedCpuCoolerId != null)
+        {
+            var selectedCooler = await _context.CpuCoolers.FindAsync(selectedCpuCoolerId);
+            if (selectedCooler != null)
+            {
+                // Pokazujemy tylko obudowy, które pomieszczą wysokość tego chłodzenia
+                casesQuery = casesQuery.Where(c => c.MaxCpuCoolerHeightMm >= selectedCooler.HeightMm);
+                ViewData["CompatibilityMessage"] = (ViewData["CompatibilityMessage"] != null ? ViewData["CompatibilityMessage"] + " oraz " : "") + 
+                    $"mieszczące chłodzenie CPU o wysokości {selectedCooler.HeightMm}mm ({selectedCooler.Name}).";
+            }
+        }
         // --- NOWA KOMPATYBILNOŚĆ: OBUDOWA vs PŁYTA GŁÓWNA ---
         int? selectedMotherboardId = HttpContext.Session.GetInt32("SelectedMotherboardId");
         if (selectedMotherboardId != null)
