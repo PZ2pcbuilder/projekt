@@ -22,8 +22,12 @@ namespace PCBuilder.Controllers
             int? memoryId = HttpContext.Session.GetInt32("SelectedMemoryId"); // <- WAŻNE!
             int? caseId = HttpContext.Session.GetInt32("SelectedCaseId");
             int? cpuCoolerId = HttpContext.Session.GetInt32("SelectedCpuCoolerId");
+            int? storageId = HttpContext.Session.GetInt32("SelectedStorageId");
+            int? psuId = HttpContext.Session.GetInt32("SelectedPsuId"); // <- NOWE
 
-
+            var cpu = cpuId != null ? _context.Cpus.Find(cpuId) : null;
+            var gpu = gpuId != null ? _context.Gpus.Find(gpuId) : null;
+            ViewBag.SelectedStorage = storageId != null ? _context.Storages.Find(storageId) : null;
             ViewBag.SelectedCpu = cpuId != null ? _context.Cpus.Find(cpuId) : null;
             ViewBag.SelectedGpu = gpuId != null ? _context.Gpus.Find(gpuId) : null;
             ViewBag.SelectedMotherboard = motherboardId != null ? _context.Motherboards.Find(motherboardId) : null;
@@ -32,6 +36,19 @@ namespace PCBuilder.Controllers
             ViewBag.SelectedMemory = memoryId != null ? _context.Memories.Find(memoryId) : null; // <- WAŻNE!
             ViewBag.SelectedCase = caseId != null ? _context.Cases.Find(caseId) : null;
 
+
+            int tdpSuma = 0;
+            if (cpu != null) tdpSuma += cpu.Tdp;
+            if (gpu != null) tdpSuma += gpu.RecommendedPsuW;
+            
+            if (tdpSuma > 0)
+            {
+                tdpSuma += 70; // Dodajemy 70W stałego zapasu na płytę, RAM i dyski
+            }
+            
+            ViewBag.TotalTdp = tdpSuma;
+            // Rekomendowany zasilacz z zapisem +30% (mnożnik 1.3)
+            ViewBag.RecommendedWattage = (int)Math.Ceiling(tdpSuma * 1.3 / 50.0) * 50; // Zaokrąglanie w górę do najbliższych 50W
             return View();
         }
 
@@ -45,6 +62,8 @@ namespace PCBuilder.Controllers
             // --- POPRAWKA 3: Obsługa zapisu RAM i Obudowy w sesji ---
             if (type == "Memory") HttpContext.Session.SetInt32("SelectedMemoryId", id); // <- WAŻNE!
             if (type == "Case") HttpContext.Session.SetInt32("SelectedCaseId", id);
+            if (type == "Storage") HttpContext.Session.SetInt32("SelectedStorageId", id);
+            if (type == "Psu") HttpContext.Session.SetInt32("SelectedPsuId", id);
 
             return RedirectToAction("Index");
         }
@@ -58,6 +77,8 @@ namespace PCBuilder.Controllers
             // --- POPRAWKA 4: Usuwanie pojedynczych części ---
             if (type == "Memory") HttpContext.Session.Remove("SelectedMemoryId"); // <- WAŻNE!
             if (type == "Case") HttpContext.Session.Remove("SelectedCaseId");
+            if (type == "Storage") HttpContext.Session.Remove("SelectedStorageId");
+            if (type == "Psu") HttpContext.Session.Remove("SelectedPsuId");
             
             return RedirectToAction("Index");
         }

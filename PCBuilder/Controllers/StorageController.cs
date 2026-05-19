@@ -18,18 +18,17 @@ namespace PCBuilder.Controllers
             ViewData["CurrentFilter"] = searchString;
             var query = _context.Storages.AsQueryable();
 
+            // --- WYSZUKIWANIE TEKSTOWE ---
             if (!string.IsNullOrEmpty(searchString))
             {
-                bool isNumber = double.TryParse(searchString, out double searchNumeric);
-
                 query = query.Where(s => 
-                    (s.Name != null && s.Name.ToLower().Contains(searchString.ToLower())) || 
-                    (s.Type != null && s.Type.ToLower().Contains(searchString.ToLower())) || 
-                    (s.Interface != null && s.Interface.ToLower().Contains(searchString.ToLower())) ||
-                    (isNumber && s.Capacity >= searchNumeric));
+                    s.Name.Contains(searchString) || 
+                    s.Type.Contains(searchString) || 
+                    s.Interface.Contains(searchString) || 
+                    s.FormFactor.Contains(searchString));
             }
 
-            var result = await query.OrderByDescending(s => s.Type).ThenByDescending(s => s.Capacity).ToListAsync();
+            var result = await query.OrderBy(s => s.Type).ThenBy(s => s.Name).ToListAsync();
             return View(result);
         }
     }

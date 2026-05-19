@@ -10,6 +10,13 @@
         <span class="badge bg-secondary">Liczba pozycji: @Model.Count()</span>
     </div>
 
+    @if (ViewData["CompatibilityMessage"] != null)
+    {
+        <div class="alert alert-info shadow-sm mb-4">
+            <i class="bi bi-info-circle-fill me-2"></i> @ViewData["CompatibilityMessage"]
+        </div>
+    }
+
     <div class="card shadow-sm mb-4">
         <div class="card-body">
             <form asp-action="Index" method="get" class="row g-3">
@@ -68,9 +75,13 @@
                             @(item.Price?.ToString("C") ?? "N/A")
                         </td>
                         <td class="text-end">
-                            <button class="btn btn-sm btn-outline-primary" title="Dodaj do konfiguracji">
-                                <i class="bi bi-plus-lg"></i>
-                            </button>
+                            <form asp-controller="Configuration" asp-action="AddComponent" method="post">
+                                <input type="hidden" name="type" value="Psu" />
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <button type="submit" class="btn btn-sm btn-outline-primary" title="Dodaj do konfiguracji">
+                                    <i class="bi bi-plus-lg"></i>
+                                </button>
+                            </form>
                         </td>
                     </tr>
                 }

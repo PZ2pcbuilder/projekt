@@ -43,9 +43,9 @@ namespace PCBuilder.Controllers
                     {
                         bool isNumber = double.TryParse(searchString, out double searchNumeric);
                         memoryList = memoryList.Where(m => 
-                            m.Name.Contains(searchString) || 
-                            m.Speed.Contains(searchString) || 
-                            (isNumber && m.Capacity == searchNumeric)).ToList();
+                            m.Name.Contains(searchString) ||  
+                            (isNumber && m.Capacity == searchNumeric) ||
+                            (isNumber && m.Speed == searchNumeric)).ToList();
                     }
 
                     return View(memoryList);
@@ -60,8 +60,8 @@ namespace PCBuilder.Controllers
                 query = query.Where(m => 
                     m.Name.Contains(searchString) || 
                     m.MemoryType.Contains(searchString) ||
-                    m.Speed.Contains(searchString) ||
-                    (isNumber && m.Capacity == searchNumeric));
+                    (isNumber && m.Capacity == searchNumeric) ||
+                    (isNumber && m.Speed == searchNumeric));
             }
 
             var result = await query.OrderByDescending(m => m.MemoryType).ThenBy(m => m.Name).ToListAsync();
