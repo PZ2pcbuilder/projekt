@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PCBuilder.Data;
+using PCBuilder.Models.Filters;
 
 namespace PCBuilder.Controllers
 {
@@ -13,23 +14,44 @@ namespace PCBuilder.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index(string searchString)
+        public async Task<IActionResult> Index(StorageFilter filter)
         {
-            ViewData["CurrentFilter"] = searchString;
+            filter ??= new StorageFilter();
             var query = _context.Storages.AsQueryable();
 
-            // --- WYSZUKIWANIE TEKSTOWE ---
-            if (!string.IsNullOrEmpty(searchString))
+            if (!string.IsNullOrWhiteSpace(filter.Search))
             {
-                query = query.Where(s => 
-                    s.Name.Contains(searchString) || 
-                    s.Type.Contains(searchString) || 
-                    s.Interface.Contains(searchString) || 
-                    s.FormFactor.Contains(searchString));
+                var s = filter.Search.ToLower();
+                query = query.Where(x =>
+                    x.Name.ToLower().Contains(s) ||
+                    x.Type.ToLower().Contains(s) ||
+                    x.Interface.ToLower().Contains(s) ||
+                    x.FormFactor.ToLower().Contains(s));
             }
 
-            var result = await query.OrderBy(s => s.Type).ThenBy(s => s.Name).ToListAsync();
-            return View(result);
+            if (filter.MinPrice.HasValue) query = query.Where(x => x.Price >= filter.MinPrice);
+            if (filter.MaxPrice.HasValue) query = query.Where(x => x.Price <= filter.MaxPrice);
+            if (filter.MinCapacity.HasValue) query = query.Where(x => x.Capacity >= filter.MinCapacity);
+            if (filter.MaxCapacity.HasValue) query = query.Where(x => x.Capacity <= filter.MaxCapacity);
+            if (filter.MinCache.HasValue) query = query.Where(x => x.Cache >= filter.MinCache);
+            if (filter.MaxCache.HasValue) query = query.Where(x => x.Cache <= filter.MaxCache);
+            if (!string.IsNullOrWhiteSpace(filter.Type)) query = query.Where(x => x.Type == filter.Type);
+            if (!string.IsNullOrWhiteSpace(filter.FormFactor)) query = query.Where(x => x.FormFactor == filter.FormFactor);
+            if (!string.IsNullOrWhiteSpace(filter.Interface)) query = query.Where(x => x.Interface == filter.Interface);
+
+            var types = await _context.Storages.Select(x => x.Type).Distinct().OrderBy(s => s).ToListAsync();
+            var formFactors = await _context.Storages.Select(x => x.FormFactor).Distinct().OrderBy(s => s).ToListAsync();
+            var interfaces = await _context.Storages.Select(x => x.Interface).Distinct().OrderBy(s => s).ToListAsync();
+
+            var vm = new StorageIndexViewModel
+            {
+                Items = await query.OrderBy(x => x.Type).ThenBy(x => x.Name).ToListAsync(),
+                Filter = filter,
+                Types = types,
+                FormFactors = formFactors,
+                Interfaces = interfaces
+            };
+            return View(vm);
         }
     }
 }

@@ -50,10 +50,35 @@
                         </li>
                     </ul>
                     
-                    <div class="d-flex align-items-center mt-3 mt-lg-0">
+                    <div class="d-flex align-items-center mt-3 mt-lg-0 gap-2">
                         <a class="btn btn-primary fw-semibold px-4 rounded-pill shadow-sm d-flex align-items-center gap-2" asp-area="" asp-controller="Configuration" asp-action="Index">
                             <i class="bi bi-tools"></i> Mój Zestaw
                         </a>
+                        @{
+                            var authUsername = Context.Session.GetString("AuthUsername");
+                            var authRole = Context.Session.GetString("AuthRole");
+                        }
+                        @if (!string.IsNullOrEmpty(authUsername))
+                        {
+                            <div class="dropdown">
+                                <button class="btn btn-outline-light rounded-pill px-3 dropdown-toggle d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-person-circle"></i>
+                                    <span>@authUsername</span>
+                                    @if (authRole == "Admin")
+                                    {
+                                        <span class="badge bg-warning text-dark ms-1">Admin</span>
+                                    }
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end shadow">
+                                    @if (authRole == "Admin")
+                                    {
+                                        <li><a class="dropdown-item" asp-controller="Admin" asp-action="Users"><i class="bi bi-people me-2"></i>Użytkownicy</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                    }
+                                    <li><a class="dropdown-item" asp-controller="Account" asp-action="Logout"><i class="bi bi-box-arrow-right me-2"></i>Wyloguj</a></li>
+                                </ul>
+                            </div>
+                        }
                     </div>
 
                 </div>

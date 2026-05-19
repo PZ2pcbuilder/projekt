@@ -1,35 +1,39 @@
 using Microsoft.EntityFrameworkCore;
 using PCBuilder.Data;
+using PCBuilder.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // ==========================================================
-// 1. REJESTRACJA USŁUG (Wszystko z builder.Services)
+// 1. REJESTRACJA USŁUG
 // ==========================================================
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddControllersWithViews();
+// Globalny filtr autoryzacji – każde żądanie HTML wymaga zalogowanego użytkownika
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add<AuthFilter>();
+});
 
-// TUTAJ PRZENIESIONE: Rejestracja pamięci podręcznej i sesji przed zbudowaniem aplikacji
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30); // Koszyk wygasa po 30 min bezruchu
+    options.IdleTimeout = TimeSpan.FromHours(2);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
+    options.Cookie.Name = ".PCBuilder.Session";
 });
 
+// HttpContext dostępny w klasach pomocniczych (np. do zapisu konfiguracji)
+builder.Services.AddHttpContextAccessor();
 
-// ==========================================================
-// ZBUDOWANIE APLIKACJI (Od tego momentu usługi są TYLKO DO ODCZYTU)
-// ==========================================================
 var app = builder.Build();
 
 
 // ==========================================================
-// 2. INICJALIZACJA BAZY DANYCH (Wykorzystanie zbudowanych usług)
+// 2. INICJALIZACJA BAZY DANYCH
 // ==========================================================
 using (var scope = app.Services.CreateScope())
 {
@@ -49,7 +53,7 @@ using (var scope = app.Services.CreateScope())
 
 
 // ==========================================================
-// 3. KONFIGURACJA POTOKU ŻĄDAŃ HTTP (Middleware - app.Use...)
+// 3. KONFIGURACJA POTOKU ŻĄDAŃ HTTP
 // ==========================================================
 if (!app.Environment.IsDevelopment())
 {
@@ -62,7 +66,6 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-// Włączenie obsługi sesji w potoku (pomiędzy Routingiem a Autoryzacją)
 app.UseSession();
 
 app.UseAuthorization();

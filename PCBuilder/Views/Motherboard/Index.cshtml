@@ -1,7 +1,8 @@
-@model IEnumerable<PCBuilder.Models.Motherboard>
+@model PCBuilder.Models.Filters.MotherboardIndexViewModel
 
 @{
     ViewData["Title"] = "Płyty Główne";
+    var f = Model.Filter;
 }
 @if (ViewData["CompatibilityMessage"] != null)
 {
@@ -12,21 +13,100 @@
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="display-5 fw-bold text-dark"><i class="bi bi-motherboard text-primary"></i> Lista Płyt Głównych</h1>
-        <span class="badge bg-dark px-3 py-2 fs-6 shadow-sm">Liczba pozycji: @Model.Count()</span>
+        <span class="badge bg-dark px-3 py-2 fs-6 shadow-sm">Liczba pozycji: @Model.Items.Count</span>
     </div>
 
-    <div class="card shadow-sm border-0 mb-4 bg-light">
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+            <h6 class="fw-bold mb-0"><i class="bi bi-funnel me-2 text-primary"></i>Filtry</h6>
+            <a asp-action="Index" class="btn btn-sm btn-outline-secondary">Wyczyść filtry</a>
+        </div>
         <div class="card-body py-3">
             <form asp-action="Index" method="get" class="row g-3">
-                <div class="col-md-6">
-                    <div class="input-group shadow-sm">
-                        <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
-                        <input type="text" name="searchString" class="form-control border-start-0" placeholder="Szukaj po nazwie, sockecie lub formacie..." value="@ViewData["CurrentFilter"]" />
-                        <button type="submit" class="btn btn-primary px-4">Filtruj</button>
+                <div class="col-md-12">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white"><i class="bi bi-search text-muted"></i></span>
+                        <input type="text" name="Search" class="form-control" placeholder="Szukaj po nazwie, sockecie, formacie..." value="@f.Search" />
                     </div>
                 </div>
-                <div class="col-md-6 text-end d-flex align-items-center justify-content-end">
-                    <a asp-action="Index" class="btn btn-outline-secondary px-3 shadow-sm">Wyczyść filtry</a>
+
+                <div class="col-md-3">
+                    <label class="form-label small text-muted fw-semibold">Cena (PLN)</label>
+                    <div class="input-group">
+                        <input type="number" step="0.01" name="MinPrice" class="form-control" placeholder="od" value="@f.MinPrice" />
+                        <input type="number" step="0.01" name="MaxPrice" class="form-control" placeholder="do" value="@f.MaxPrice" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small text-muted fw-semibold">Sloty RAM</label>
+                    <div class="input-group">
+                        <input type="number" name="MinMemorySlots" class="form-control" placeholder="od" value="@f.MinMemorySlots" />
+                        <input type="number" name="MaxMemorySlots" class="form-control" placeholder="do" value="@f.MaxMemorySlots" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small text-muted fw-semibold">Max RAM (GB)</label>
+                    <div class="input-group">
+                        <input type="number" name="MinMaxMemory" class="form-control" placeholder="od" value="@f.MinMaxMemory" />
+                        <input type="number" name="MaxMaxMemory" class="form-control" placeholder="do" value="@f.MaxMaxMemory" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small text-muted fw-semibold">Sloty M.2</label>
+                    <div class="input-group">
+                        <input type="number" name="MinM2Slots" class="form-control" placeholder="od" value="@f.MinM2Slots" />
+                        <input type="number" name="MaxM2Slots" class="form-control" placeholder="do" value="@f.MaxM2Slots" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small text-muted fw-semibold">Porty SATA</label>
+                    <div class="input-group">
+                        <input type="number" name="MinSataPorts" class="form-control" placeholder="od" value="@f.MinSataPorts" />
+                        <input type="number" name="MaxSataPorts" class="form-control" placeholder="do" value="@f.MaxSataPorts" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small text-muted fw-semibold">Socket</label>
+                    <select name="Socket" class="form-select">
+                        <option value="">Dowolny</option>
+                        @foreach (var s in Model.Sockets)
+                        {
+                            <option value="@s" selected="@(f.Socket == s)">@s</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small text-muted fw-semibold">Format</label>
+                    <select name="FormFactor" class="form-select">
+                        <option value="">Dowolny</option>
+                        @foreach (var s in Model.FormFactors)
+                        {
+                            <option value="@s" selected="@(f.FormFactor == s)">@s</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small text-muted fw-semibold">Typ RAM</label>
+                    <select name="MemoryType" class="form-select">
+                        <option value="">Dowolny</option>
+                        @foreach (var s in Model.MemoryTypes)
+                        {
+                            <option value="@s" selected="@(f.MemoryType == s)">@s</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small text-muted fw-semibold">Kolor</label>
+                    <select name="Color" class="form-select">
+                        <option value="">Dowolny</option>
+                        @foreach (var s in Model.Colors)
+                        {
+                            <option value="@s" selected="@(f.Color == s)">@s</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-12 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary px-4"><i class="bi bi-funnel-fill me-1"></i>Filtruj</button>
                 </div>
             </form>
         </div>
@@ -39,47 +119,25 @@
                     <th class="ps-4 py-3" style="width: 25%;">Nazwa</th>
                     <th class="text-center py-3" style="width: 12%;">Socket</th>
                     <th class="text-center py-3" style="width: 15%;">Format</th>
-                    <th class="text-center py-3" style="width: 20%;">Pamięć RAM</th>
-                    <th class="text-center py-3" style="width: 10%;">Złącza M.2</th>
+                    <th class="text-center py-3" style="width: 20%;">RAM</th>
+                    <th class="text-center py-3" style="width: 10%;">M.2</th>
                     <th class="text-end py-3 pe-4" style="width: 13%;">Cena</th>
                     <th style="width: 5%;"></th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model)
+                @foreach (var item in Model.Items)
                 {
                     <tr class="custom-row">
-                        <td class="ps-4 py-3">
-                            <div class="fw-bold text-dark fs-6">@item.Name</div>
-                        </td>
+                        <td class="ps-4 py-3"><div class="fw-bold text-dark fs-6">@item.Name</div></td>
+                        <td class="text-center py-3"><span class="badge bg-secondary-subtle text-secondary-emphasis px-3 py-2 rounded">@item.Socket</span></td>
+                        <td class="text-center py-3"><span class="badge bg-light text-dark border px-3 py-2 font-monospace">@item.FormFactor</span></td>
                         <td class="text-center py-3">
-                            <span class="badge bg-secondary-subtle text-secondary-emphasis px-3 py-2 rounded fs-7">
-                                @item.Socket
-                            </span>
+                            <span class="badge bg-info-subtle text-info-emphasis fw-bold px-3 py-1 rounded-pill">@item.MemoryType</span>
+                            <div class="text-muted small mt-1">Max @item.MaxMemory GB / @item.MemorySlots slotów</div>
                         </td>
-                        <td class="text-center py-3">
-                            <span class="badge bg-light text-dark border px-3 py-2 shadow-sm font-monospace fs-7">
-                                @item.FormFactor
-                            </span>
-                        </td>
-                        <td class="text-center py-3">
-                            <div class="d-flex flex-column align-items-center justify-content-center">
-                                <span class="badge bg-info-subtle text-info-emphasis fw-bold px-3 py-1 rounded-pill fs-7 mb-1">
-                                    @item.MemoryType
-                                </span>
-                                <span class="text-muted small" style="font-size: 0.75rem;">
-                                    Max @item.MaxMemory GB / @item.MemorySlots sloty
-                                </span>
-                            </div>
-                        </td>
-                        <td class="text-center py-3">
-                            <span class="badge bg-warning-subtle text-warning-emphasis rounded-pill border border-warning-subtle shadow-sm px-3 py-1 d-inline-flex align-items-center gap-1 lh-1" style="font-size: 0.75rem;">
-                                @item.M2Slots x M.2
-                            </span>
-                        </td>
-                        <td class="text-end fw-bold text-success py-3 pe-4 fs-6">
-                            @(item.Price?.ToString("C") ?? "N/A")
-                        </td>
+                        <td class="text-center py-3"><span class="badge bg-warning-subtle text-warning-emphasis rounded-pill px-3 py-1 small">@item.M2Slots x M.2</span></td>
+                        <td class="text-end fw-bold text-success py-3 pe-4">@(item.Price?.ToString("C") ?? "N/A")</td>
                         <td class="text-end pe-4 py-3">
                             <form asp-controller="Configuration" asp-action="AddComponent" method="post" class="m-0">
                                 <input type="hidden" name="type" value="Motherboard" />
@@ -95,61 +153,22 @@
         </table>
     </div>
 
-    @if (!Model.Any())
+    @if (!Model.Items.Any())
     {
         <div class="alert alert-warning mt-4 text-center shadow-sm">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i> Nie znaleziono płyt głównych spełniających kryteria wyszukiwania.
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> Brak płyt głównych spełniających wybrane filtry.
         </div>
     }
 </div>
 
 <style>
-    .table thead th {
-        font-weight: 600;
-        text-transform: uppercase;
-        font-size: 0.8rem;
-        letter-spacing: 0.06em;
-        border: none;
-    }
-    
-    .custom-row {
-        transition: background-color 0.2s ease, transform 0.1s ease;
-    }
-
-    .table-hover tbody tr.custom-row:hover {
-        background-color: rgba(13, 110, 253, 0.04) !important;
-    }
-
-    .fs-7 {
-        font-size: 0.85rem !important;
-    }
-
-    .bg-info-subtle {
-        background-color: #e0f2fe !important;
-    }
-    
-    .text-info-emphasis {
-        color: #0369a1 !important;
-    }
-
-    .bg-secondary-subtle {
-        background-color: #f1f5f9 !important;
-        border: 1px solid #e2e8f0;
-    }
-
-    .text-secondary-emphasis {
-        color: #334155 !important;
-    }
-
-    .bg-warning-subtle {
-        background-color: #fffbeb !important;
-    }
-
-    .text-warning-emphasis {
-        color: #b45309 !important;
-    }
-
-    .border-warning-subtle {
-        border-color: #fde68a !important;
-    }
+    .table thead th { font-weight: 600; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.06em; border: none; }
+    .custom-row { transition: background-color 0.2s ease; }
+    .table-hover tbody tr.custom-row:hover { background-color: rgba(13, 110, 253, 0.04) !important; }
+    .bg-info-subtle { background-color: #e0f2fe !important; }
+    .text-info-emphasis { color: #0369a1 !important; }
+    .bg-secondary-subtle { background-color: #f1f5f9 !important; }
+    .text-secondary-emphasis { color: #334155 !important; }
+    .bg-warning-subtle { background-color: #fffbeb !important; }
+    .text-warning-emphasis { color: #b45309 !important; }
 </style>

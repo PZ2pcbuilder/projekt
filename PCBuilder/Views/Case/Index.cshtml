@@ -1,7 +1,8 @@
-@model IEnumerable<PCBuilder.Models.Case>
+@model PCBuilder.Models.Filters.CaseIndexViewModel
 
 @{
     ViewData["Title"] = "Obudowy";
+    var f = Model.Filter;
 }
 @if (ViewData["CompatibilityMessage"] != null)
 {
@@ -12,21 +13,83 @@
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="display-5 fw-bold text-dark"><i class="bi bi-pc-display text-primary"></i> Lista Obudów</h1>
-        <span class="badge bg-dark px-3 py-2 fs-6 shadow-sm">Liczba pozycji: @Model.Count()</span>
+        <span class="badge bg-dark px-3 py-2 fs-6 shadow-sm">Liczba pozycji: @Model.Items.Count</span>
     </div>
 
-    <div class="card shadow-sm border-0 mb-4 bg-light">
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+            <h6 class="fw-bold mb-0"><i class="bi bi-funnel me-2 text-primary"></i>Filtry</h6>
+            <a asp-action="Index" class="btn btn-sm btn-outline-secondary">Wyczyść filtry</a>
+        </div>
         <div class="card-body py-3">
             <form asp-action="Index" method="get" class="row g-3">
-                <div class="col-md-6">
-                    <div class="input-group shadow-sm">
-                        <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
-                        <input type="text" name="searchString" class="form-control border-start-0" placeholder="Szukaj po nazwie, typie lub kolorze..." value="@ViewData["CurrentFilter"]" />
-                        <button type="submit" class="btn btn-primary px-4">Filtruj</button>
+                <div class="col-md-12">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white"><i class="bi bi-search text-muted"></i></span>
+                        <input type="text" name="Search" class="form-control" placeholder="Szukaj po nazwie lub typie..." value="@f.Search" />
                     </div>
                 </div>
-                <div class="col-md-6 text-end d-flex align-items-center justify-content-end">
-                    <a asp-action="Index" class="btn btn-outline-secondary px-3 shadow-sm">Wyczyść filtry</a>
+
+                <div class="col-md-3">
+                    <label class="form-label small text-muted fw-semibold">Cena (PLN)</label>
+                    <div class="input-group">
+                        <input type="number" step="0.01" name="MinPrice" class="form-control" placeholder="od" value="@f.MinPrice" />
+                        <input type="number" step="0.01" name="MaxPrice" class="form-control" placeholder="do" value="@f.MaxPrice" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small text-muted fw-semibold">Objętość (L)</label>
+                    <div class="input-group">
+                        <input type="number" step="0.1" name="MinVolume" class="form-control" placeholder="od" value="@f.MinVolume" />
+                        <input type="number" step="0.1" name="MaxVolume" class="form-control" placeholder="do" value="@f.MaxVolume" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small text-muted fw-semibold">Max długość GPU (mm)</label>
+                    <div class="input-group">
+                        <input type="number" name="MinMaxGpuLength" class="form-control" placeholder="od" value="@f.MinMaxGpuLength" />
+                        <input type="number" name="MaxMaxGpuLength" class="form-control" placeholder="do" value="@f.MaxMaxGpuLength" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small text-muted fw-semibold">Max wys. chłodzenia (mm)</label>
+                    <div class="input-group">
+                        <input type="number" name="MinMaxCoolerHeight" class="form-control" placeholder="od" value="@f.MinMaxCoolerHeight" />
+                        <input type="number" name="MaxMaxCoolerHeight" class="form-control" placeholder="do" value="@f.MaxMaxCoolerHeight" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small text-muted fw-semibold">Typ obudowy</label>
+                    <select name="Type" class="form-select">
+                        <option value="">Dowolny</option>
+                        @foreach (var s in Model.Types)
+                        {
+                            <option value="@s" selected="@(f.Type == s)">@s</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small text-muted fw-semibold">Kolor</label>
+                    <select name="Color" class="form-select">
+                        <option value="">Dowolny</option>
+                        @foreach (var s in Model.Colors)
+                        {
+                            <option value="@s" selected="@(f.Color == s)">@s</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small text-muted fw-semibold">Format PSU</label>
+                    <select name="PsuFormFactor" class="form-select">
+                        <option value="">Dowolny</option>
+                        @foreach (var s in Model.PsuFormFactors)
+                        {
+                            <option value="@s" selected="@(f.PsuFormFactor == s)">@s</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary px-4"><i class="bi bi-funnel-fill me-1"></i>Filtruj</button>
                 </div>
             </form>
         </div>
@@ -37,7 +100,7 @@
             <thead class="table-dark">
                 <tr>
                     <th class="ps-4 py-3" style="width: 25%;">Nazwa modelu</th>
-                    <th class="py-3" style="width: 15%;">Typ obudowy</th>
+                    <th class="py-3" style="width: 15%;">Typ</th>
                     <th class="text-center py-3" style="width: 20%;">Kolor i Panel</th>
                     <th class="text-center py-3" style="width: 12%;">Max GPU</th>
                     <th class="text-center py-3" style="width: 15%;">Formaty Płyt</th>
@@ -46,40 +109,28 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model)
+                @foreach (var item in Model.Items)
                 {
                     <tr class="custom-row">
-                        <td class="ps-4 py-3">
-                            <div class="fw-bold text-dark fs-6">@item.Name</div>
-                        </td>
-                        <td class="py-3 text-secondary">
-                            <div>@item.Type</div>
-                        </td>
+                        <td class="ps-4 py-3"><div class="fw-bold text-dark fs-6">@item.Name</div></td>
+                        <td class="py-3 text-secondary">@item.Type</td>
                         <td class="text-center py-3">
-                            <div class="d-inline-block text-center">
-                                <span class="badge bg-light text-dark border px-3 py-1-5 mb-1 shadow-sm font-monospace">@item.Color</span>
-                                <div class="text-muted small text-nowrap">@item.SidePanel</div>
-                            </div>
+                            <span class="badge bg-light text-dark border px-3 py-1 font-monospace">@item.Color</span>
+                            <div class="text-muted small">@item.SidePanel</div>
                         </td>
-                        <td class="text-center py-3">
-                            <span class="badge bg-info-subtle text-info-emphasis fw-bold px-3 py-2 rounded-pill fs-7">
-                                @(item.MaxGpuLengthMm) mm
-                            </span>
-                        </td>
+                        <td class="text-center py-3"><span class="badge bg-info-subtle text-info-emphasis fw-bold px-3 py-2 rounded-pill">@(item.MaxGpuLengthMm) mm</span></td>
                         <td class="text-center py-3">
                             <div class="d-flex flex-wrap justify-content-center gap-1" style="max-width: 220px; margin: auto;">
                                 @if (!string.IsNullOrEmpty(item.SupportedMoboFormFactors))
                                 {
                                     @foreach (var form in item.SupportedMoboFormFactors.Replace("\"", "").Split(','))
                                     {
-                                        <span class="badge bg-secondary-subtle text-secondary-emphasis px-2 py-1 rounded" style="font-size: 0.75rem;">@form.Trim()</span>
+                                        <span class="badge bg-secondary-subtle text-secondary-emphasis px-2 py-1 rounded small">@form.Trim()</span>
                                     }
                                 }
                             </div>
                         </td>
-                        <td class="text-end fw-bold text-success py-3 pe-4 fs-6">
-                            @(item.Price?.ToString("C") ?? "N/A")
-                        </td>
+                        <td class="text-end fw-bold text-success py-3 pe-4">@(item.Price?.ToString("C") ?? "N/A")</td>
                         <td class="text-end pe-4 py-3">
                             <form asp-controller="Configuration" asp-action="AddComponent" method="post" class="m-0">
                                 <input type="hidden" name="type" value="Case" />
@@ -95,54 +146,20 @@
         </table>
     </div>
 
-    @if (!Model.Any())
+    @if (!Model.Items.Any())
     {
         <div class="alert alert-warning mt-4 text-center shadow-sm">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i> Nie znaleziono obudów spełniających kryteria wyszukiwania.
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> Brak obudów spełniających wybrane filtry.
         </div>
     }
 </div>
 
 <style>
-    .table thead th {
-        font-weight: 600;
-        text-transform: uppercase;
-        font-size: 0.8rem;
-        letter-spacing: 0.06em;
-        border: none;
-    }
-    
-    .custom-row {
-        transition: background-color 0.2s ease, transform 0.1s ease;
-    }
-
-    .table-hover tbody tr.custom-row:hover {
-        background-color: rgba(13, 110, 253, 0.04) !important;
-    }
-
-    .py-1-5 {
-        padding-top: 0.25rem !important;
-        padding-bottom: 0.25rem !important;
-    }
-
-    .fs-7 {
-        font-size: 0.85rem !important;
-    }
-    
-    .bg-info-subtle {
-        background-color: #e0f2fe !important;
-    }
-    
-    .text-info-emphasis {
-        color: #0369a1 !important;
-    }
-
-    .bg-secondary-subtle {
-        background-color: #f1f5f9 !important;
-        border: 1px solid #e2e8f0;
-    }
-
-    .text-secondary-emphasis {
-        color: #334155 !important;
-    }
+    .table thead th { font-weight: 600; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.06em; border: none; }
+    .custom-row { transition: background-color 0.2s ease; }
+    .table-hover tbody tr.custom-row:hover { background-color: rgba(13, 110, 253, 0.04) !important; }
+    .bg-info-subtle { background-color: #e0f2fe !important; }
+    .text-info-emphasis { color: #0369a1 !important; }
+    .bg-secondary-subtle { background-color: #f1f5f9 !important; }
+    .text-secondary-emphasis { color: #334155 !important; }
 </style>

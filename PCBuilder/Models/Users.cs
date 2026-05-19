@@ -7,5 +7,8 @@ namespace PCBuilder.Models
         public required string PasswordHash { get; set; }
         public required string Role { get; set; } // "Admin" lub "User"
         public required string ApiToken { get; set; } // Do punktu z REST API
+
+        // JSON z zapisanym wyborem komponentów (po-sesyjna pamięć konfiguracji)
+        public string? SavedConfigJson { get; set; }
     }
 }

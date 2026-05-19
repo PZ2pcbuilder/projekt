@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PCBuilder.Data;
+using PCBuilder.Models.Filters;
 
 namespace PCBuilder.Controllers
 {
@@ -13,32 +14,58 @@ namespace PCBuilder.Controllers
             _context = context;
         }
 
-        // Akcja wyświetlająca listę
-       public async Task<IActionResult> Index(string searchString)
+        public async Task<IActionResult> Index(CpuFilter filter)
         {
-            ViewData["CurrentFilter"] = searchString;
+            filter ??= new CpuFilter();
             var query = _context.Cpus.AsQueryable();
 
-            // --- KOMPATYBILNOŚĆ W DRUGĄ STRONĘ ---
+            // Kompatybilność: jeśli wybrano płytę główną, ograniczamy do pasujących socketów
             int? selectedMotherboardId = HttpContext.Session.GetInt32("SelectedMotherboardId");
             if (selectedMotherboardId != null)
             {
                 var selectedMotherboard = await _context.Motherboards.FindAsync(selectedMotherboardId);
                 if (selectedMotherboard != null)
                 {
-                    // Pokazuj tylko procesory pasujące do wybranej płyty
                     query = query.Where(c => c.Socket == selectedMotherboard.Socket);
                     ViewData["CompatibilityMessage"] = $"Pokazuję procesory pasujące do płyty z gniazdem {selectedMotherboard.Socket}";
                 }
             }
-            // -------------------------------------
 
-            if (!string.IsNullOrEmpty(searchString))
+            // Wyszukiwanie tekstowe
+            if (!string.IsNullOrWhiteSpace(filter.Search))
             {
-                query = query.Where(s => (s.Name != null && s.Name.ToLower().Contains(searchString.ToLower())) || (s.Socket != null && s.Socket.ToLower().Contains(searchString.ToLower())));
+                var s = filter.Search.ToLower();
+                query = query.Where(c =>
+                    (c.Name != null && c.Name.ToLower().Contains(s)) ||
+                    (c.Socket != null && c.Socket.ToLower().Contains(s)) ||
+                    (c.Microarchitecture != null && c.Microarchitecture.ToLower().Contains(s)));
             }
 
-            return View(await query.ToListAsync());
+            // Filtry zakresowe i listy rozwijane
+            if (filter.MinPrice.HasValue) query = query.Where(c => c.Price >= filter.MinPrice);
+            if (filter.MaxPrice.HasValue) query = query.Where(c => c.Price <= filter.MaxPrice);
+            if (filter.MinCores.HasValue) query = query.Where(c => c.CoreCount >= filter.MinCores);
+            if (filter.MaxCores.HasValue) query = query.Where(c => c.CoreCount <= filter.MaxCores);
+            if (filter.MinTdp.HasValue) query = query.Where(c => c.Tdp >= filter.MinTdp);
+            if (filter.MaxTdp.HasValue) query = query.Where(c => c.Tdp <= filter.MaxTdp);
+            if (!string.IsNullOrWhiteSpace(filter.Socket)) query = query.Where(c => c.Socket == filter.Socket);
+            if (!string.IsNullOrWhiteSpace(filter.MemoryType)) query = query.Where(c => c.MemoryType == filter.MemoryType);
+            if (!string.IsNullOrWhiteSpace(filter.Microarchitecture)) query = query.Where(c => c.Microarchitecture == filter.Microarchitecture);
+
+            // Listy do dropdownów: zawsze z całej bazy (nie z przefiltrowanego zbioru)
+            var sockets = await _context.Cpus.Select(c => c.Socket).Where(s => s != null).Distinct().OrderBy(s => s).ToListAsync();
+            var memTypes = await _context.Cpus.Select(c => c.MemoryType).Where(s => s != null).Distinct().OrderBy(s => s).ToListAsync();
+            var archs = await _context.Cpus.Select(c => c.Microarchitecture).Where(s => s != null).Distinct().OrderBy(s => s).ToListAsync();
+
+            var vm = new CpuIndexViewModel
+            {
+                Items = await query.OrderBy(c => c.Name).ToListAsync(),
+                Filter = filter,
+                Sockets = sockets!,
+                MemoryTypes = memTypes!,
+                Microarchitectures = archs!
+            };
+            return View(vm);
         }
     }
 }
