@@ -16,17 +16,17 @@ namespace PCBuilder.Models
         public required string Chipset { get; set; } // np. GeForce RTX 4070
 
         // Pamięć VRAM w GB (np. 12.0)
-        public double? Memory { get; set; }
+        public int? Memory { get; set; }
 
-        public double? CoreClock { get; set; } // w MHz
+        public int? CoreClock { get; set; } // w MHz
 
-        public double? BoostClock { get; set; } // w MHz
+        public int? BoostClock { get; set; } // w MHz
 
         public string? Color { get; set; }
 
         // KLUCZ KOMPATYBILNOŚCI 1: Długość karty w mm
         // Sprawdzamy, czy Gpu.Length <= Case.MaxGpuLengthMm
-        public double? Length { get; set; }
+        public int? Length { get; set; }
 
         // KLUCZ LOGIKI 1: Zalecana moc zasilacza
         // Można wyświetlić ostrzeżenie, jeśli PowerSupply.Wattage < Gpu.RecommendedPsuW

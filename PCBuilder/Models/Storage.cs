@@ -13,14 +13,12 @@ namespace PCBuilder.Models
         public decimal? Price { get; set; }
 
         // Pojemność w GB (np. 1000.0 lub 2000.0)
-        public double? Capacity { get; set; }
-
-        public decimal? PricePerGb { get; set; }
+        public int? Capacity { get; set; }
 
         public required string Type { get; set; } // SSD lub HDD
 
         // Cache w MB (może być puste dla niektórych dysków)
-        public double? Cache { get; set; }
+        public int? Cache { get; set; }
 
         // KLUCZ KOMPATYBILNOŚCI 1: np. "M.2-2280" lub "2.5\""
         // Pozwala sprawdzić, czy płyta ma odpowiednie złącza

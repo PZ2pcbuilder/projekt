@@ -17,13 +17,9 @@ namespace PCBuilder.Models
 
         public required string Color { get; set; }
 
-        public string? Psu { get; set; } // Informacja o wbudowanym zasilaczu
-
         public string? SidePanel { get; set; }
 
         public double? ExternalVolume { get; set; } // Objętość w litrach
-
-        public required int Internal35Bays { get; set; } // Liczba zatok 3.5"
 
         // Ważne dla konfiguratora: lista wspieranych formatów płyt (np. "ATX, Micro ATX")
         public required string SupportedMoboFormFactors { get; set; }
