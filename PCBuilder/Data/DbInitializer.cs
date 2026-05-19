@@ -53,12 +53,13 @@ namespace PCBuilder.Data
                         Name = p[0],
                         Price = ParseDecimal(p[1]),
                         Speed = p[2],
-                        Modules = p[3],
-                        PricePerGb = ParseDecimal(p[4]),
-                        Color = p[5],
-                        FirstWordLatency = ParseDouble(p[6]),
-                        CasLatency = ParseDouble(p[7]),
-                        MemoryType = p[8], // 8. kolumna (indeks 7)
+                        Modules = p[9],
+                        Capacity = int.Parse(p[8]),
+                        PricePerGb = ParseDecimal(p[3]),
+                        Color = p[4],
+                        FirstWordLatency = ParseDouble(p[5]),
+                        CasLatency = ParseDouble(p[6]),
+                        MemoryType = p[7], // 8. kolumna (indeks 7)
                     });
                 }
             }
