@@ -29,7 +29,7 @@ namespace PCBuilder.Controllers
                 {
                     // Pokazujemy tylko te karty, których długość jest mniejsza lub równa wolnej przestrzeni w obudowie
                     query = query.Where(g => g.Length <= selectedCase.MaxGpuLengthMm);
-                    ViewData["CompatibilityMessage"] = $"Filtrowanie aktywne: Pokazuję karty o długości do {selectedCase.MaxGpuLengthMm}mm pasujące do obudowy {selectedCase.Name}.";
+                    ViewData["CompatibilityMessage"] = $"Pokazuję karty o długości do {selectedCase.MaxGpuLengthMm}mm pasujące do obudowy {selectedCase.Name}.";
                 }
             }
 
