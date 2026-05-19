@@ -8,6 +8,7 @@ namespace PCBuilder.Models{
         public decimal? Price { get; set; }
         public required string Speed { get; set; }
         public required string Modules { get; set; }
+        public required int Capacity { get; set; }
         public decimal? PricePerGb { get; set; }
         public required string Color { get; set; }
         public double? FirstWordLatency { get; set; }
