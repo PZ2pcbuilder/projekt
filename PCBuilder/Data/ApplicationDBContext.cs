@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using PCBuilder.Models;
 
+
 namespace PCBuilder.Data
 {
     public class ApplicationDbContext : DbContext

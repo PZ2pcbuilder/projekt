@@ -1,7 +1,7 @@
 @{
     ViewData["Title"] = "Twój Zestaw Komputerowy";
     
-    // Rzutowanie danych przesłanych przez kontroler z ViewBag na konkretne modele
+    // Rzutowanie danych z ViewBag na konkretne modele
     var cpu = ViewBag.SelectedCpu as PCBuilder.Models.Cpu;
     var gpu = ViewBag.SelectedGpu as PCBuilder.Models.Gpu;
     var motherboard = ViewBag.SelectedMotherboard as PCBuilder.Models.Motherboard;
@@ -9,7 +9,7 @@
     var pcCase = ViewBag.SelectedCase as PCBuilder.Models.Case;
     var cooler = ViewBag.SelectedCpuCooler as PCBuilder.Models.CpuCooler;
     var storage = ViewBag.SelectedStorage as PCBuilder.Models.Storage;
-    var powerSupply = ViewBag.SelectedPowerSupply as PCBuilder.Models.PowerSupply; // DODANE: Model zasilacza
+    var powerSupply = ViewBag.SelectedPowerSupply as PCBuilder.Models.PowerSupply;
 
     // Kalkulacja łącznej ceny w locie
     decimal totalCena = 0;
@@ -21,263 +21,325 @@
     totalCena += cooler?.Price ?? 0;
     totalCena += storage?.Price ?? 0;
     totalCena += powerSupply?.Price ?? 0;
+    
+    // Use a nullable object array to avoid possible null-reference assignment warnings (CS8601)
+    int addedComponentsCount = new object?[] { cpu, gpu, motherboard, memory, pcCase, cooler, storage, powerSupply }.Count(x => x != null);
 }
 
-<div class="container mt-4">
+<div class="container mt-4 mb-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="display-5"><i class="bi bi-pc"></i> Twój Wirtualny PC</h1>
+        <h1 class="display-5 fw-bold text-dark"><i class="bi bi-tools text-primary me-2"></i>Twój Konfigurator</h1>
         @if (totalCena > 0)
         {
             <h3 class="text-success mb-0 fw-bold">Razem: @totalCena.ToString("C")</h3>
         }
     </div>
 
-    <div class="row">
-        <div class="col-md-9">
-            <div class="list-group shadow-sm">
-                
-                <div class="list-group-item d-flex justify-content-between align-items-center p-3">
-                    <div class="d-flex align-items-center">
-                        <div class="fs-3 text-secondary me-3"><i class="bi bi-cpu"></i></div>
-                        <div>
-                            <h5 class="mb-1">Procesor (CPU)</h5>
-                            @if (cpu != null)
-                            {
-                                <span class="fw-bold text-primary">@cpu.Name</span>
-                                <span class="badge bg-light text-dark border ms-2">@cpu.Socket</span>
-                                <div class="text-success small fw-bold">@cpu.Price?.ToString("C")</div>
-                            }
-                            else
-                            {
-                                <span class="text-muted small">Nie wybrano procesora</span>
-                            }
-                        </div>
+    <div class="card shadow-sm border-0 bg-white">
+        <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 fw-bold text-secondary">Komponenty Zestawu</h5>
+            <span class="badge bg-primary rounded-pill">Wybrano: @addedComponentsCount / 8</span>
+        </div>
+        <div class="list-group list-group-flush">
+            
+            <div class="list-group-item d-flex justify-content-between align-items-center p-4">
+                <div class="d-flex align-items-center">
+                    <div class="icon-box-config bg-primary-subtle text-primary me-3 d-flex align-items-center justify-content-center rounded-3" style="width: 50px; height: 50px;">
+                        <i class="bi bi-cpu fs-4"></i>
                     </div>
                     <div>
+                        <h6 class="mb-1 text-muted text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.05em;">Procesor (CPU)</h6>
                         @if (cpu != null)
                         {
-                            <a asp-action="RemoveComponent" asp-route-type="Cpu" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
+                            <div class="fw-bold text-dark fs-6 mb-1">@cpu.Name</div>
+                            <span class="badge bg-secondary-subtle text-secondary-emphasis">@cpu.Socket</span>
+                            <span class="text-muted small ms-2">@cpu.CoreCount rdzeni / @cpu.BoostClock Boost</span>
                         }
                         else
                         {
-                            <a asp-controller="Cpu" asp-action="Index" class="btn btn-sm btn-primary">Wybierz</a>
+                            <span class="text-muted small fst-italic">Brak wybranego podzespołu</span>
                         }
                     </div>
                 </div>
-
-                <div class="list-group-item d-flex justify-content-between align-items-center p-3 mt-2">
-                    <div class="d-flex align-items-center">
-                        <div class="fs-3 text-secondary me-3"><i class="bi bi-snow"></i></div>
-                        <div>
-                            <h5 class="mb-1">Chłodzenie procesora</h5>
-                            @if (cooler != null)
-                            {
-                                <span class="fw-bold text-primary">@cooler.Name</span>
-                                <span class="badge bg-light text-dark border ms-2">@cooler.HeightMm mm</span>
-                                <div class="text-success small fw-bold">@cooler.Price?.ToString("C")</div>
-                            }
-                            else
-                            {
-                                <span class="text-muted small">Nie wybrano chłodzenia procesora</span>
-                            }
-                        </div>
-                    </div>
-                    <div>
-                        @if (cooler != null)
-                        {
-                            <a asp-action="RemoveComponent" asp-route-type="CpuCooler" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
-                        }
-                        else
-                        {
-                            <a asp-controller="CpuCooler" asp-action="Index" class="btn btn-sm btn-primary">Wybierz</a>
-                        }
-                    </div>
+                <div class="text-end d-flex flex-column justify-content-center align-items-end">
+                    @if (cpu != null)
+                    {
+                        <div class="text-success fw-bold mb-2">@cpu.Price?.ToString("C")</div>
+                        <a asp-action="RemoveComponent" asp-route-type="Cpu" class="btn btn-sm btn-outline-danger px-3"><i class="bi bi-trash"></i></a>
+                    }
+                    else
+                    {
+                        <div class="mb-2 text-muted small">---</div>
+                        <a asp-controller="Cpu" asp-action="Index" class="btn btn-sm btn-primary px-3 shadow-sm">Dodaj</a>
+                    }
                 </div>
-
-                <div class="list-group-item d-flex justify-content-between align-items-center p-3 mt-2">
-                    <div class="d-flex align-items-center">
-                        <div class="fs-3 text-secondary me-3"><i class="bi bi-motherboard"></i></div>
-                        <div>
-                            <h5 class="mb-1">Płyta Główna</h5>
-                            @if (motherboard != null)
-                            {
-                                <span class="fw-bold text-primary">@motherboard.Name</span>
-                                <span class="badge bg-light text-dark border ms-2">@motherboard.Socket</span>
-                                <span class="badge bg-secondary ms-1">@motherboard.MemoryType</span>
-                                <div class="text-success small fw-bold">@motherboard.Price?.ToString("C")</div>
-                            }
-                            else
-                            {
-                                <span class="text-muted small">Nie wybrano płyty głównej</span>
-                            }
-                        </div>
-                    </div>
-                    <div>
-                        @if (motherboard != null)
-                        {
-                            <a asp-action="RemoveComponent" asp-route-type="Motherboard" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
-                        }
-                        else
-                        {
-                            <a asp-controller="Motherboard" asp-action="Index" class="btn btn-sm btn-primary">Wybierz</a>
-                        }
-                    </div>
-                </div>
-
-                <div class="list-group-item d-flex justify-content-between align-items-center p-3 mt-2">
-                    <div class="d-flex align-items-center">
-                        <div class="fs-3 text-secondary me-3"><i class="bi bi-memory"></i></div>
-                        <div>
-                            <h5 class="mb-1">Pamięć RAM</h5>
-                            @if (memory != null)
-                            {
-                                <span class="fw-bold text-primary">@memory.Name</span>
-                                <span class="badge bg-info text-dark ms-2">@memory.MemoryType</span>
-                                <span class="badge bg-dark ms-1">@memory.Capacity GB (@memory.Modules x)</span>
-                                <div class="text-success small fw-bold">@memory.Price?.ToString("C")</div>
-                            }
-                            else
-                            {
-                                <span class="text-muted small">Nie wybrano pamięci RAM</span>
-                            }
-                        </div>
-                    </div>
-                    <div>
-                        @if (memory != null)
-                        {
-                            <a asp-action="RemoveComponent" asp-route-type="Memory" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
-                        }
-                        else
-                        {
-                            <a asp-controller="Memory" asp-action="Index" class="btn btn-sm btn-primary">Wybierz</a>
-                        }
-                    </div>
-                </div>
-
-                <div class="list-group-item d-flex justify-content-between align-items-center p-3 mt-2">
-                    <div class="d-flex align-items-center">
-                        <div class="fs-3 text-secondary me-3"><i class="bi bi-hdd-rack"></i></div>
-                        <div>
-                            <h5 class="mb-1">Pamięć masowa (Dysk)</h5>
-                            @if (storage != null)
-                            {
-                                <span class="fw-bold text-primary">@storage.Name</span>
-                                <span class="badge bg-light text-dark border ms-2">@storage.Type (@storage.Interface)</span>
-                                <span class="badge bg-dark ms-1">@storage.Capacity</span>
-                                <div class="text-success small fw-bold">@storage.Price?.ToString("C")</div>
-                            }
-                            else
-                            {
-                                <span class="text-muted small">Nie wybrano dysku twardego</span>
-                            }
-                        </div>
-                    </div>
-                    <div>
-                        @if (storage != null)
-                        {
-                            <a asp-action="RemoveComponent" asp-route-type="Storage" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
-                        }
-                        else
-                        {
-                            <a asp-controller="Storage" asp-action="Index" class="btn btn-sm btn-primary">Wybierz</a>
-                        }
-                    </div>
-                </div>
-
-                <div class="list-group-item d-flex justify-content-between align-items-center p-3 mt-2">
-                    <div class="d-flex align-items-center">
-                        <div class="fs-3 text-secondary me-3"><i class="bi bi-gpu-card"></i></div>
-                        <div>
-                            <h5 class="mb-1">Karta Graficzna (GPU)</h5>
-                            @if (gpu != null)
-                            {
-                                <span class="fw-bold text-primary">@gpu.Name</span>
-                                <span class="badge bg-light text-dark border ms-2">@gpu.Length mm</span>
-                                <div class="text-success small fw-bold">@gpu.Price?.ToString("C")</div>
-                            }
-                            else
-                            {
-                                <span class="text-muted small">Nie wybrano karty graficznej</span>
-                            }
-                        </div>
-                    </div>
-                    <div>
-                        @if (gpu != null)
-                        {
-                            <a asp-action="RemoveComponent" asp-route-type="Gpu" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
-                        }
-                        else
-                        {
-                            <a asp-controller="Gpu" asp-action="Index" class="btn btn-sm btn-primary">Wybierz</a>
-                        }
-                    </div>
-                </div>
-
-                <div class="list-group-item d-flex justify-content-between align-items-center p-3 mt-2">
-                    <div class="d-flex align-items-center">
-                        <div class="fs-3 text-secondary me-3"><i class="bi bi-plug"></i></div>
-                        <div>
-                            <h5 class="mb-1">Zasilacz (PSU)</h5>
-                            @if (powerSupply != null)
-                            {
-                                <span class="fw-bold text-primary">@powerSupply.Name</span>
-                                <span class="badge bg-dark text-warning ms-2">@powerSupply.Wattage W</span>
-                                <span class="badge bg-light text-dark border ms-1">@powerSupply.Efficiency</span>
-                                <div class="text-success small fw-bold">@powerSupply.Price?.ToString("C")</div>
-                            }
-                            else
-                            {
-                                <span class="text-muted small">Nie wybrano zasilacza</span>
-                            }
-                        </div>
-                    </div>
-                    <div>
-                        @if (powerSupply != null)
-                        {
-                            <a asp-action="RemoveComponent" asp-route-type="PowerSupply" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
-                        }
-                        else
-                        {
-                            <a asp-controller="PowerSupply" asp-action="Index" class="btn btn-sm btn-primary">Wybierz</a>
-                        }
-                    </div>
-                </div>
-
-                <div class="list-group-item d-flex justify-content-between align-items-center p-3 mt-2">
-                    <div class="d-flex align-items-center">
-                        <div class="fs-3 text-secondary me-3"><i class="bi bi-pc-display"></i></div>
-                        <div>
-                            <h5 class="mb-1">Obudowa</h5>
-                            @if (pcCase != null)
-                            {
-                                <span class="fw-bold text-primary">@pcCase.Name</span>
-                                <span class="badge bg-light text-dark border ms-2">Max GPU: @(pcCase.MaxGpuLengthMm)mm</span>
-                                <div class="text-success small fw-bold">@pcCase.Price?.ToString("C")</div>
-                            }
-                            else
-                            {
-                                <span class="text-muted small">Nie wybrano obudowy</span>
-                            }
-                        </div>
-                    </div>
-                    <div>
-                        @if (pcCase != null)
-                        {
-                            <a asp-action="RemoveComponent" asp-route-type="Case" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
-                        }
-                        else
-                        {
-                            <a asp-controller="Case" asp-action="Index" class="btn btn-sm btn-primary">Wybierz</a>
-                        }
-                    </div>
-                </div>
-
             </div>
 
-            @if (cpu != null || gpu != null || motherboard != null || memory != null || pcCase != null || cooler != null || storage != null || powerSupply != null)
-            {
-                <a asp-action="Clear" class="btn btn-outline-danger mt-4 btn-sm"><i class="bi bi-arrow-counterclockwise"></i> Wyczyść cały zestaw</a>
-            }
+            <div class="list-group-item d-flex justify-content-between align-items-center p-4 bg-light">
+                <div class="d-flex align-items-center">
+                    <div class="icon-box-config bg-secondary-subtle text-secondary-emphasis me-3 d-flex align-items-center justify-content-center rounded-3" style="width: 50px; height: 50px;">
+                        <i class="bi bi-motherboard fs-4"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-1 text-muted text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.05em;">Płyta Główna</h6>
+                        @if (motherboard != null)
+                        {
+                            <div class="fw-bold text-dark fs-6 mb-1">@motherboard.Name</div>
+                            <span class="badge bg-secondary-subtle text-secondary-emphasis">@motherboard.Socket</span>
+                            <span class="badge bg-info-subtle text-info-emphasis ms-1">@motherboard.MemoryType</span>
+                            <span class="badge bg-light text-dark border ms-1">@motherboard.FormFactor</span>
+                        }
+                        else
+                        {
+                            <span class="text-muted small fst-italic">Brak wybranego podzespołu</span>
+                        }
+                    </div>
+                </div>
+                <div class="text-end d-flex flex-column justify-content-center align-items-end">
+                    @if (motherboard != null)
+                    {
+                        <div class="text-success fw-bold mb-2">@motherboard.Price?.ToString("C")</div>
+                        <a asp-action="RemoveComponent" asp-route-type="Motherboard" class="btn btn-sm btn-outline-danger px-3"><i class="bi bi-trash"></i></a>
+                    }
+                    else
+                    {
+                        <div class="mb-2 text-muted small">---</div>
+                        <a asp-controller="Motherboard" asp-action="Index" class="btn btn-sm btn-primary px-3 shadow-sm">Dodaj</a>
+                    }
+                </div>
+            </div>
+
+            <div class="list-group-item d-flex justify-content-between align-items-center p-4">
+                <div class="d-flex align-items-center">
+                    <div class="icon-box-config bg-info-subtle text-info-emphasis me-3 d-flex align-items-center justify-content-center rounded-3" style="width: 50px; height: 50px;">
+                        <i class="bi bi-gpu-card fs-4"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-1 text-muted text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.05em;">Karta Graficzna (GPU)</h6>
+                        @if (gpu != null)
+                        {
+                            <div class="fw-bold text-dark fs-6 mb-1">@gpu.Name</div>
+                            <span class="badge bg-info-subtle text-info-emphasis">@gpu.Memory GB</span>
+                            <span class="text-muted small ms-2">Dł: @gpu.Length mm</span>
+                        }
+                        else
+                        {
+                            <span class="text-muted small fst-italic">Brak wybranego podzespołu</span>
+                        }
+                    </div>
+                </div>
+                <div class="text-end d-flex flex-column justify-content-center align-items-end">
+                    @if (gpu != null)
+                    {
+                        <div class="text-success fw-bold mb-2">@gpu.Price?.ToString("C")</div>
+                        <a asp-action="RemoveComponent" asp-route-type="Gpu" class="btn btn-sm btn-outline-danger px-3"><i class="bi bi-trash"></i></a>
+                    }
+                    else
+                    {
+                        <div class="mb-2 text-muted small">---</div>
+                        <a asp-controller="Gpu" asp-action="Index" class="btn btn-sm btn-primary px-3 shadow-sm">Dodaj</a>
+                    }
+                </div>
+            </div>
+
+            <div class="list-group-item d-flex justify-content-between align-items-center p-4 bg-light">
+                <div class="d-flex align-items-center">
+                    <div class="icon-box-config bg-primary-subtle text-primary me-3 d-flex align-items-center justify-content-center rounded-3" style="width: 50px; height: 50px;">
+                        <i class="bi bi-memory fs-4"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-1 text-muted text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.05em;">Pamięć RAM</h6>
+                        @if (memory != null)
+                        {
+                            <div class="fw-bold text-dark fs-6 mb-1">@memory.Name</div>
+                            <span class="badge bg-secondary-subtle text-secondary-emphasis">@memory.MemoryType</span>
+                            <span class="badge bg-info-subtle text-info-emphasis ms-1">@memory.Capacity GB</span>
+                            <span class="badge bg-light text-dark border ms-1 font-monospace">@memory.Speed MHz</span>
+                        }
+                        else
+                        {
+                            <span class="text-muted small fst-italic">Brak wybranego podzespołu</span>
+                        }
+                    </div>
+                </div>
+                <div class="text-end d-flex flex-column justify-content-center align-items-end">
+                    @if (memory != null)
+                    {
+                        <div class="text-success fw-bold mb-2">@memory.Price?.ToString("C")</div>
+                        <a asp-action="RemoveComponent" asp-route-type="Memory" class="btn btn-sm btn-outline-danger px-3"><i class="bi bi-trash"></i></a>
+                    }
+                    else
+                    {
+                        <div class="mb-2 text-muted small">---</div>
+                        <a asp-controller="Memory" asp-action="Index" class="btn btn-sm btn-primary px-3 shadow-sm">Dodaj</a>
+                    }
+                </div>
+            </div>
+
+            <div class="list-group-item d-flex justify-content-between align-items-center p-4">
+                <div class="d-flex align-items-center">
+                    <div class="icon-box-config bg-secondary-subtle text-secondary-emphasis me-3 d-flex align-items-center justify-content-center rounded-3" style="width: 50px; height: 50px;">
+                        <i class="bi bi-hdd-rack fs-4"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-1 text-muted text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.05em;">Dysk Twardy</h6>
+                        @if (storage != null)
+                        {
+                            <div class="fw-bold text-dark fs-6 mb-1">@storage.Name</div>
+                            <span class="badge bg-light text-dark border">@storage.Type</span>
+                            <span class="badge bg-info-subtle text-info-emphasis ms-1">@storage.Capacity GB</span>
+                            <span class="badge bg-warning-subtle text-warning-emphasis ms-1">@storage.Interface</span>
+                        }
+                        else
+                        {
+                            <span class="text-muted small fst-italic">Brak wybranego podzespołu</span>
+                        }
+                    </div>
+                </div>
+                <div class="text-end d-flex flex-column justify-content-center align-items-end">
+                    @if (storage != null)
+                    {
+                        <div class="text-success fw-bold mb-2">@storage.Price?.ToString("C")</div>
+                        <a asp-action="RemoveComponent" asp-route-type="Storage" class="btn btn-sm btn-outline-danger px-3"><i class="bi bi-trash"></i></a>
+                    }
+                    else
+                    {
+                        <div class="mb-2 text-muted small">---</div>
+                        <a asp-controller="Storage" asp-action="Index" class="btn btn-sm btn-primary px-3 shadow-sm">Dodaj</a>
+                    }
+                </div>
+            </div>
+
+            <div class="list-group-item d-flex justify-content-between align-items-center p-4 bg-light">
+                <div class="d-flex align-items-center">
+                    <div class="icon-box-config bg-info-subtle text-info-emphasis me-3 d-flex align-items-center justify-content-center rounded-3" style="width: 50px; height: 50px;">
+                        <i class="bi bi-snow fs-4"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-1 text-muted text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.05em;">Chłodzenie Procesora</h6>
+                        @if (cooler != null)
+                        {
+                            <div class="fw-bold text-dark fs-6 mb-1">@cooler.Name</div>
+                            <span class="text-muted small">Wys: @cooler.HeightMm mm</span>
+                        }
+                        else
+                        {
+                            <span class="text-muted small fst-italic">Brak wybranego podzespołu</span>
+                        }
+                    </div>
+                </div>
+                <div class="text-end d-flex flex-column justify-content-center align-items-end">
+                    @if (cooler != null)
+                    {
+                        <div class="text-success fw-bold mb-2">@cooler.Price?.ToString("C")</div>
+                        <a asp-action="RemoveComponent" asp-route-type="CpuCooler" class="btn btn-sm btn-outline-danger px-3"><i class="bi bi-trash"></i></a>
+                    }
+                    else
+                    {
+                        <div class="mb-2 text-muted small">---</div>
+                        <a asp-controller="CpuCooler" asp-action="Index" class="btn btn-sm btn-primary px-3 shadow-sm">Dodaj</a>
+                    }
+                </div>
+            </div>
+
+            <div class="list-group-item d-flex justify-content-between align-items-center p-4">
+                <div class="d-flex align-items-center">
+                    <div class="icon-box-config bg-warning-subtle text-warning-emphasis me-3 d-flex align-items-center justify-content-center rounded-3" style="width: 50px; height: 50px;">
+                        <i class="bi bi-plug fs-4"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-1 text-muted text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.05em;">Zasilacz (PSU)</h6>
+                        @if (powerSupply != null)
+                        {
+                            <div class="fw-bold text-dark fs-6 mb-1">@powerSupply.Name</div>
+                            <span class="badge bg-info-subtle text-info-emphasis">@powerSupply.Wattage W</span>
+                            <span class="badge bg-warning-subtle text-warning-emphasis ms-1">@powerSupply.Efficiency</span>
+                            <span class="badge bg-light text-dark border ms-1">@powerSupply.FormFactor</span>
+                        }
+                        else
+                        {
+                            <span class="text-muted small fst-italic">Brak wybranego podzespołu</span>
+                        }
+                    </div>
+                </div>
+                <div class="text-end d-flex flex-column justify-content-center align-items-end">
+                    @if (powerSupply != null)
+                    {
+                        <div class="text-success fw-bold mb-2">@powerSupply.Price?.ToString("C")</div>
+                        <a asp-action="RemoveComponent" asp-route-type="PowerSupply" class="btn btn-sm btn-outline-danger px-3"><i class="bi bi-trash"></i></a>
+                    }
+                    else
+                    {
+                        <div class="mb-2 text-muted small">---</div>
+                        <a asp-controller="PowerSupply" asp-action="Index" class="btn btn-sm btn-primary px-3 shadow-sm">Dodaj</a>
+                    }
+                </div>
+            </div>
+
+            <div class="list-group-item d-flex justify-content-between align-items-center p-4 bg-light rounded-bottom-3">
+                <div class="d-flex align-items-center">
+                    <div class="icon-box-config bg-secondary-subtle text-secondary-emphasis me-3 d-flex align-items-center justify-content-center rounded-3" style="width: 50px; height: 50px;">
+                        <i class="bi bi-pc-display fs-4"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-1 text-muted text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.05em;">Obudowa</h6>
+                        @if (pcCase != null)
+                        {
+                            <div class="fw-bold text-dark fs-6 mb-1">@pcCase.Name</div>
+                            <span class="badge bg-light text-dark border">@pcCase.Type</span>
+                            <span class="text-muted small ms-2">Max GPU: @(pcCase.MaxGpuLengthMm)mm</span>
+                        }
+                        else
+                        {
+                            <span class="text-muted small fst-italic">Brak wybranego podzespołu</span>
+                        }
+                    </div>
+                </div>
+                <div class="text-end d-flex flex-column justify-content-center align-items-end">
+                    @if (pcCase != null)
+                    {
+                        <div class="text-success fw-bold mb-2">@pcCase.Price?.ToString("C")</div>
+                        <a asp-action="RemoveComponent" asp-route-type="Case" class="btn btn-sm btn-outline-danger px-3"><i class="bi bi-trash"></i></a>
+                    }
+                    else
+                    {
+                        <div class="mb-2 text-muted small">---</div>
+                        <a asp-controller="Case" asp-action="Index" class="btn btn-sm btn-primary px-3 shadow-sm">Dodaj</a>
+                    }
+                </div>
+            </div>
+
         </div>
     </div>
+    
+    <div class="mt-4 d-flex justify-content-between align-items-center">
+        @if (addedComponentsCount > 0)
+        {
+            <a asp-action="Clear" class="btn btn-outline-danger px-4 shadow-sm"><i class="bi bi-arrow-counterclockwise"></i> Wyczyść całą konfigurację</a>
+        }
+        else
+        {
+            <div></div> }
+    </div>
 </div>
+
+<style>
+    /* Wsparcie dla ładnych kolorów teł w ikonach konfiguratora */
+    .bg-primary-subtle { background-color: #e0f2fe !important; }
+    .bg-info-subtle { background-color: #e0f2fe !important; }
+    .bg-warning-subtle { background-color: #fffbeb !important; }
+    .bg-secondary-subtle { background-color: #f1f5f9 !important; }
+
+    .text-info-emphasis { color: #0369a1 !important; }
+    .text-warning-emphasis { color: #b45309 !important; }
+    .text-secondary-emphasis { color: #334155 !important; }
+    
+    /* Paski zebry w elementach listy i eleganckie marginesy wew. */
+    .list-group-item.bg-light {
+        background-color: #f8fafc !important;
+    }
+    
+    .icon-box-config {
+        border: 1px solid rgba(0,0,0,0.05);
+    }
+</style>

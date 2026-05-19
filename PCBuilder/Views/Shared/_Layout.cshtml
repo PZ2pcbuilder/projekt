@@ -1,64 +1,77 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - PCBuilder</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/PCBuilder.styles.css" asp-append-version="true" />
 </head>
-<body>
+<body class="bg-light-subtle">
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">PCBuilder</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom box-shadow mb-4 py-3">
+            <div class="container">
+                <a class="navbar-brand fw-bold fs-4 d-flex align-items-center gap-2 text-primary" asp-area="" asp-controller="Home" asp-action="Index">
+                    <i class="bi bi-pc-display-horizontal"></i>
+                    <span>PCBuilder</span>
+                </a>
+                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Przełącz nawigację">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                <div class="navbar-collapse collapse d-lg-inline-flex justify-content-between">
+                    
+                    <ul class="navbar-nav flex-grow-1 ms-lg-4 gap-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link custom-nav-link" asp-area="" asp-controller="Cpu" asp-action="Index"><i class="bi bi-cpu me-1"></i>Procesory</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Cpu" asp-action="Index">Procesory</a>
+                            <a class="nav-link custom-nav-link" asp-area="" asp-controller="Gpu" asp-action="Index"><i class="bi bi-gpu-card me-1"></i>Grafika</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Gpu" asp-action="Index">Karty graficzne</a>
+                            <a class="nav-link custom-nav-link" asp-area="" asp-controller="Motherboard" asp-action="Index"><i class="bi bi-motherboard me-1"></i>Płyty</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Case" asp-action="Index">Obudowy</a>
+                            <a class="nav-link custom-nav-link" asp-area="" asp-controller="Memory" asp-action="Index"><i class="bi bi-memory me-1"></i>RAM</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="CpuCooler" asp-action="Index">Chłodzenia</a>
+                            <a class="nav-link custom-nav-link" asp-area="" asp-controller="Storage" asp-action="Index"><i class="bi bi-hdd-rack me-1"></i>Dyski</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Memory" asp-action="Index">RAM</a>
+                            <a class="nav-link custom-nav-link" asp-area="" asp-controller="PowerSupply" asp-action="Index"><i class="bi bi-plug me-1"></i>Zasilacze</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Motherboard" asp-action="Index">Płyty główne</a>
+                            <a class="nav-link custom-nav-link" asp-area="" asp-controller="Case" asp-action="Index"><i class="bi bi-pc-display me-1"></i>Obudowy</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="PowerSupply" asp-action="Index">Zasilacze</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Storage" asp-action="Index">Dyski twarde</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Configuration" asp-action="Index">Konfiguracja</a>
+                            <a class="nav-link custom-nav-link" asp-area="" asp-controller="CpuCooler" asp-action="Index"><i class="bi bi-snow me-1"></i>Chłodzenie</a>
                         </li>
                     </ul>
+                    
+                    <div class="d-flex align-items-center mt-3 mt-lg-0">
+                        <a class="btn btn-primary fw-semibold px-4 rounded-pill shadow-sm d-flex align-items-center gap-2" asp-area="" asp-controller="Configuration" asp-action="Index">
+                            <i class="bi bi-tools"></i> Mój Zestaw
+                        </a>
+                    </div>
+
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
+    
+    <div class="container main-content-wrapper pb-5">
+        <main role="main">
             @RenderBody()
         </main>
     </div>
+
+    <footer class="border-top bg-white footer text-muted mt-auto py-3">
+        <div class="container text-center small">
+            &copy; @DateTime.Now.Year - PCBuilder - Zbuduj swój wymarzony komputer.
+        </div>
+    </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

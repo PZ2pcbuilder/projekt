@@ -3,75 +3,80 @@
 @{
     ViewData["Title"] = "Pamięć RAM";
 }
-
+@if (ViewData["CompatibilityMessage"] != null)
+{
+    <div class="alert alert-info shadow-sm mb-4">
+        <i class="bi bi-info-circle-fill me-2"></i> @ViewData["CompatibilityMessage"]
+    </div>
+}
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="display-5"><i class="bi bi-memory"></i> Pamięć RAM</h1>
-        <span class="badge bg-secondary">Liczba pozycji: @Model.Count()</span>
+        <h1 class="display-5 fw-bold text-dark"><i class="bi bi-memory text-primary"></i> Lista Pamięci RAM</h1>
+        <span class="badge bg-dark px-3 py-2 fs-6 shadow-sm">Liczba pozycji: @Model.Count()</span>
     </div>
 
-    @if (ViewData["CompatibilityMessage"] != null)
-    {
-        <div class="alert alert-info shadow-sm mb-4">
-            <i class="bi bi-info-circle-fill me-2"></i> @ViewData["CompatibilityMessage"]
-        </div>
-    }
-
-    <div class="card shadow-sm mb-4">
-        <div class="card-body">
+    <div class="card shadow-sm border-0 mb-4 bg-light">
+        <div class="card-body py-3">
             <form asp-action="Index" method="get" class="row g-3">
                 <div class="col-md-6">
-                    <div class="input-group">
-                        <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
-                        <input type="text" name="searchString" class="form-control" placeholder="Szukaj po nazwie, typie (DDR4/5) lub pojemności..." value="@ViewData["CurrentFilter"]" />
-                        <button type="submit" class="btn btn-primary">Filtruj</button>
+                    <div class="input-group shadow-sm">
+                        <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                        <input type="text" name="searchString" class="form-control border-start-0" placeholder="Szukaj po nazwie, typie (DDR4/5) lub pojemności..." value="@ViewData["CurrentFilter"]" />
+                        <button type="submit" class="btn btn-primary px-4">Filtruj</button>
                     </div>
                 </div>
-                <div class="col-md-6 text-end">
-                    <a asp-action="Index" class="btn btn-outline-secondary">Wyczyść</a>
+                <div class="col-md-6 text-end d-flex align-items-center justify-content-end">
+                    <a asp-action="Index" class="btn btn-outline-secondary px-3 shadow-sm">Wyczyść filtry</a>
                 </div>
             </form>
         </div>
     </div>
 
-    <div class="table-responsive shadow-sm rounded">
-        <table class="table table-hover align-middle mb-0">
+    <div class="table-responsive shadow rounded-3 border">
+        <table class="table table-hover align-middle mb-0 bg-white">
             <thead class="table-dark">
                 <tr>
-                    <th>Model i Kolor</th>
-                    <th class="text-center">Typ</th>
-                    <th class="text-center">Pojemność</th>
-                    <th class="text-center">Taktowanie</th>
-                    <th class="text-center">Liczba modułów</th>
-                    <th class="text-end">Cena</th>
-                    <th></th>
+                    <th class="ps-4 py-3" style="width: 25%;">Nazwa</th>
+                    <th class="text-center py-3" style="width: 15%;">Typ Pamięci</th>
+                    <th class="text-center py-3" style="width: 15%;">Pojemność</th>
+                    <th class="text-center py-3" style="width: 15%;">Moduły</th>
+                    <th class="text-center py-3" style="width: 12%;">Prędkość</th>
+                    <th class="text-end py-3 pe-4" style="width: 13%;">Cena</th>
+                    <th style="width: 5%;"></th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var item in Model)
                 {
-                    <tr>
-                        <td>
-                            <div class="fw-bold">@item.Name</div>
-                            <small class="text-muted">Kolor: @item.Color</small>
+                    <tr class="custom-row">
+                        <td class="ps-4 py-3">
+                            <div class="fw-bold text-dark fs-6">@item.Name</div>
                         </td>
-                        <td class="text-center">
-                            <span class="badge bg-info text-dark">@item.MemoryType</span>
+                        <td class="text-center py-3">
+                            <span class="badge bg-secondary-subtle text-secondary-emphasis px-3 py-2 rounded fs-7">
+                                @item.MemoryType
+                            </span>
                         </td>
-                        <td class="text-center">
-                            <span class="fw-bold">@(item.Capacity) GB</span>
+                        <td class="text-center py-3">
+                            <span class="badge bg-info-subtle text-info-emphasis fw-bold px-3 py-2 rounded-pill fs-7">
+                                @(item.Capacity) GB
+                            </span>
                         </td>
-                        <td class="text-center">
-                            <span class="text-muted">@item.Speed</span>
+                        <td class="text-center py-3">
+                            <span class="badge bg-light text-dark border px-3 py-2 shadow-sm font-monospace fs-7">
+                                @item.Modules
+                            </span>
                         </td>
-                        <td class="text-center">
-                            <span class="badge bg-light text-dark border">@item.Modules szt.</span>
+                        <td class="text-center py-3">
+                            <span class="badge bg-light text-dark border px-3 py-2 shadow-sm font-monospace fs-7">
+                                @(item.Speed) <span class="text-muted small ms-1" style="font-family: inherit;">MHz</span>
+                            </span>
                         </td>
-                        <td class="text-end fw-bold text-success">
+                        <td class="text-end fw-bold text-success py-3 pe-4 fs-6">
                             @(item.Price?.ToString("C") ?? "N/A")
                         </td>
-                        <td class="text-end">
-                            <form asp-controller="Configuration" asp-action="AddComponent" method="post">
+                        <td class="text-end pe-4 py-3">
+                            <form asp-controller="Configuration" asp-action="AddComponent" method="post" class="m-0">
                                 <input type="hidden" name="type" value="Memory" />
                                 <input type="hidden" name="id" value="@item.Id" />
                                 <button type="submit" class="btn btn-sm btn-outline-primary" title="Dodaj do konfiguracji">
@@ -84,16 +89,50 @@
             </tbody>
         </table>
     </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-warning mt-4 text-center shadow-sm">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> Nie znaleziono pamięci RAM spełniających kryteria wyszukiwania.
+        </div>
+    }
 </div>
 
 <style>
     .table thead th {
-        font-weight: 500;
+        font-weight: 600;
         text-transform: uppercase;
-        font-size: 0.85rem;
-        letter-spacing: 0.05em;
+        font-size: 0.8rem;
+        letter-spacing: 0.06em;
+        border: none;
     }
-    .table-hover tbody tr:hover {
-        background-color: rgba(0, 123, 255, 0.05);
+    
+    .custom-row {
+        transition: background-color 0.2s ease, transform 0.1s ease;
+    }
+
+    .table-hover tbody tr.custom-row:hover {
+        background-color: rgba(13, 110, 253, 0.04) !important;
+    }
+
+    .fs-7 {
+        font-size: 0.85rem !important;
+    }
+    
+    .bg-info-subtle {
+        background-color: #e0f2fe !important;
+    }
+    
+    .text-info-emphasis {
+        color: #0369a1 !important;
+    }
+
+    .bg-secondary-subtle {
+        background-color: #f1f5f9 !important;
+        border: 1px solid #e2e8f0;
+    }
+
+    .text-secondary-emphasis {
+        color: #334155 !important;
     }
 </style>

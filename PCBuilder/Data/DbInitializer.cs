@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Identity;
 
+
 namespace PCBuilder.Data
 {
     public static class DbInitializer
