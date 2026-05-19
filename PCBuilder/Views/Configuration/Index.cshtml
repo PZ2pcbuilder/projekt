@@ -1,17 +1,21 @@
 @{
     ViewData["Title"] = "Twój Zestaw Komputerowy";
     
-    // Rzutujemy dane z ViewBag na konkretne modele
+    // Rzutowanie danych przesłanych przez kontroler z ViewBag na konkretne modele
     var cpu = ViewBag.SelectedCpu as PCBuilder.Models.Cpu;
     var gpu = ViewBag.SelectedGpu as PCBuilder.Models.Gpu;
     var motherboard = ViewBag.SelectedMotherboard as PCBuilder.Models.Motherboard;
+    var memory = ViewBag.SelectedMemory as PCBuilder.Models.Memory;
     var pcCase = ViewBag.SelectedCase as PCBuilder.Models.Case;
-
-    // Sumowanie ceny zestawu w locie
+    var cooler = ViewBag.SelectedCpuCooler as PCBuilder.Models.CpuCooler;
+    // Kalkulacja łącznej ceny w locie
     decimal totalCena = 0;
     totalCena += cpu?.Price ?? 0;
     totalCena += gpu?.Price ?? 0;
     totalCena += motherboard?.Price ?? 0;
+    totalCena += memory?.Price ?? 0;
+    totalCena += pcCase?.Price ?? 0;
+    totalCena += cooler?.Price ?? 0;
 }
 
 <div class="container mt-4">
@@ -19,7 +23,7 @@
         <h1 class="display-5"><i class="bi bi-pc"></i> Twój Wirtualny PC</h1>
         @if (totalCena > 0)
         {
-            <h3 class="text-success mb-0">Razem: @totalCena.ToString("C")</h3>
+            <h3 class="text-success mb-0 fw-bold">Razem: @totalCena.ToString("C")</h3>
         }
     </div>
 
@@ -36,7 +40,7 @@
                             {
                                 <span class="fw-bold text-primary">@cpu.Name</span>
                                 <span class="badge bg-light text-dark border ms-2">@cpu.Socket</span>
-                                <div class="text-success small">@cpu.Price?.ToString("C")</div>
+                                <div class="text-success small fw-bold">@cpu.Price?.ToString("C")</div>
                             }
                             else
                             {
@@ -55,7 +59,34 @@
                         }
                     </div>
                 </div>
-
+                <div class="list-group-item d-flex justify-content-between align-items-center p-3 mt-2">
+                <div class="d-flex align-items-center">
+                    <div class="fs-3 text-secondary me-3"><i class="bi bi-snow"></i></div>
+                    <div>
+                        <h5 class="mb-1">Chłodzenie procesora</h5>
+                        @if (cooler != null)
+                        {
+                            <span class="fw-bold text-primary">@cooler.Name</span>
+                            <span class="badge bg-light text-dark border ms-2">@cooler.HeightMm mm</span>
+                            <div class="text-success small fw-bold">@cooler.Price?.ToString("C")</div>
+                        }
+                        else
+                        {
+                            <span class="text-muted small">Nie wybrano chłodzenia procesora</span>
+                        }
+                    </div>
+                </div>
+                <div>
+                    @if (cooler != null)
+                    {
+                        <a asp-action="RemoveComponent" asp-route-type="CpuCooler" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
+                    }
+                    else
+                    {
+                        <a asp-controller="CpuCooler" asp-action="Index" class="btn btn-sm btn-primary">Wybierz</a>
+                    }
+                </div>
+            </div>
                 <div class="list-group-item d-flex justify-content-between align-items-center p-3 mt-2">
                     <div class="d-flex align-items-center">
                         <div class="fs-3 text-secondary me-3"><i class="bi bi-motherboard"></i></div>
@@ -65,11 +96,12 @@
                             {
                                 <span class="fw-bold text-primary">@motherboard.Name</span>
                                 <span class="badge bg-light text-dark border ms-2">@motherboard.Socket</span>
-                                <div class="text-success small">@motherboard.Price?.ToString("C")</div>
+                                <span class="badge bg-secondary ms-1">@motherboard.MemoryType</span>
+                                <div class="text-success small fw-bold">@motherboard.Price?.ToString("C")</div>
                             }
                             else
                             {
-                                <span class="text-muted small">Nie wybrano płyty główne</span>
+                                <span class="text-muted small">Nie wybrano płyty głównej</span>
                             }
                         </div>
                     </div>
@@ -87,13 +119,44 @@
 
                 <div class="list-group-item d-flex justify-content-between align-items-center p-3 mt-2">
                     <div class="d-flex align-items-center">
+                        <div class="fs-3 text-secondary me-3"><i class="bi bi-memory"></i></div>
+                        <div>
+                            <h5 class="mb-1">Pamięć RAM</h5>
+                            @if (memory != null)
+                            {
+                                <span class="fw-bold text-primary">@memory.Name</span>
+                                <span class="badge bg-info text-dark ms-2">@memory.MemoryType</span>
+                                <span class="badge bg-dark ms-1">@memory.Capacity GB (@memory.Modules x)</span>
+                                <div class="text-success small fw-bold">@memory.Price?.ToString("C")</div>
+                            }
+                            else
+                            {
+                                <span class="text-muted small">Nie wybrano pamięci RAM</span>
+                            }
+                        </div>
+                    </div>
+                    <div>
+                        @if (memory != null)
+                        {
+                            <a asp-action="RemoveComponent" asp-route-type="Memory" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
+                        }
+                        else
+                        {
+                            <a asp-controller="Memory" asp-action="Index" class="btn btn-sm btn-primary">Wybierz</a>
+                        }
+                    </div>
+                </div>
+
+                <div class="list-group-item d-flex justify-content-between align-items-center p-3 mt-2">
+                    <div class="d-flex align-items-center">
                         <div class="fs-3 text-secondary me-3"><i class="bi bi-gpu-card"></i></div>
                         <div>
                             <h5 class="mb-1">Karta Graficzna (GPU)</h5>
                             @if (gpu != null)
                             {
                                 <span class="fw-bold text-primary">@gpu.Name</span>
-                                <div class="text-success small">@gpu.Price?.ToString("C")</div>
+                                <span class="badge bg-light text-dark border ms-2">@gpu.Length mm</span>
+                                <div class="text-success small fw-bold">@gpu.Price?.ToString("C")</div>
                             }
                             else
                             {
@@ -112,40 +175,41 @@
                         }
                     </div>
                 </div>
+
                 <div class="list-group-item d-flex justify-content-between align-items-center p-3 mt-2">
-                <div class="d-flex align-items-center">
-                    <div class="fs-3 text-secondary me-3"><i class="bi bi-pc-display"></i></div>
+                    <div class="d-flex align-items-center">
+                        <div class="fs-3 text-secondary me-3"><i class="bi bi-pc-display"></i></div>
+                        <div>
+                            <h5 class="mb-1">Obudowa</h5>
+                            @if (pcCase != null)
+                            {
+                                <span class="fw-bold text-primary">@pcCase.Name</span>
+                                <span class="badge bg-light text-dark border ms-2">Max GPU: @(pcCase.MaxGpuLengthMm)mm</span>
+                                <div class="text-success small fw-bold">@pcCase.Price?.ToString("C")</div>
+                            }
+                            else
+                            {
+                                <span class="text-muted small">Nie wybrano obudowy</span>
+                            }
+                        </div>
+                    </div>
                     <div>
-                        <h5 class="mb-1">Obudowa</h5>
                         @if (pcCase != null)
                         {
-                            <span class="fw-bold text-primary">@pcCase.Name</span>
-                            <span class="badge bg-light text-dark border ms-2">Max GPU: @(pcCase.MaxGpuLengthMm)mm</span>
-                            <div class="text-success small">@pcCase.Price?.ToString("C")</div>
+                            <a asp-action="RemoveComponent" asp-route-type="Case" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
                         }
                         else
                         {
-                            <span class="text-muted small">Nie wybrano obudowy</span>
+                            <a asp-controller="Case" asp-action="Index" class="btn btn-sm btn-primary">Wybierz</a>
                         }
                     </div>
                 </div>
-                <div>
-                    @if (pcCase != null)
-                    {
-                        <a asp-action="RemoveComponent" asp-route-type="Case" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
-                    }
-                    else
-                    {
-                        <a asp-controller="Case" asp-action="Index" class="btn btn-sm btn-primary">Wybierz</a>
-                    }
-                </div>
-            </div>
 
             </div>
 
-            @if (cpu != null || gpu != null || motherboard != null)
+            @if (cpu != null || gpu != null || motherboard != null || memory != null || pcCase != null)
             {
-                <a asp-action="Clear" class="btn btn-outline-danger mt-4 btn-sm">Wyczyść cały zestaw</a>
+                <a asp-action="Clear" class="btn btn-outline-danger mt-4 btn-sm"><i class="bi bi-arrow-counterclockwise"></i> Wyczyść cały zestaw</a>
             }
         </div>
     </div>

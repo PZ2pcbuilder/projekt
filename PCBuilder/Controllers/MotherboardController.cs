@@ -18,33 +18,19 @@ namespace PCBuilder.Controllers
             ViewData["CurrentFilter"] = searchString;
             var query = _context.Motherboards.AsQueryable();
 
-            // --- NOWA KOMPATYBILNOŚĆ: PŁYTA GŁÓWNA vs OBUDOWA ---
+            // --- KOMPATYBILNOŚĆ: PŁYTA GŁÓWNA vs OBUDOWA ---
             int? selectedCaseId = HttpContext.Session.GetInt32("SelectedCaseId");
             if (selectedCaseId != null)
             {
                 var selectedCase = await _context.Cases.FindAsync(selectedCaseId);
                 if (selectedCase != null && !string.IsNullOrEmpty(selectedCase.SupportedMoboFormFactors))
                 {
-                    // 1. Zabezpieczamy listę z obudowy:
-                    // Usuwamy nawiasy, apostrofy, spacje, zamieniamy na małe litery i otaczamy przecinkami
-                    // Np. "['ATX', 'Micro ATX']" -> ",atx,microatx,"
-                    string supportedFactorsCleaned = "," + selectedCase.SupportedMoboFormFactors
-                        .Replace(" ", "")
-                        .ToLower() + ",";
-
-                    // 2. Filtrujemy płyty główne:
-                    // Sprawdzamy czy nasza oczyszczona lista z obudowy (zmienna lokalna)
-                    // ZAWIERA format płyty głównej (odpowiednio oczyszczony i otoczony przecinkami)
-                    query = query.Where(m => 
-                        supportedFactorsCleaned.Contains("," + m.FormFactor.Replace(" ", "").ToLower() + ",")
-                    );
-                    
-                    // Zostawiłem Twoje wyświetlanie ładnego komunikatu bez zmian
-                    ViewData["CompatibilityMessage"] = $"Pokazuję płyty główne pasujące do obudowy {selectedCase.Name} (Obsługiwane formaty: {selectedCase.SupportedMoboFormFactors}).";
+                    query = query.Where(m => selectedCase.SupportedMoboFormFactors.Contains(m.FormFactor));
+                    ViewData["CompatibilityMessage"] = $"Pokazuję płyty główne pasujące do obudowy {selectedCase.Name} (Formaty: {selectedCase.SupportedMoboFormFactors.Replace("[","").Replace("]","").Replace("'","")})";
                 }
             }
 
-            // Istniejąca już wcześniej logika filtrowania dla CPU:
+            // --- KOMPATYBILNOŚĆ: PŁYTA GŁÓWNA vs PROCESOR (CPU) ---
             int? selectedCpuId = HttpContext.Session.GetInt32("SelectedCpuId");
             if (selectedCpuId != null)
             {
@@ -52,17 +38,40 @@ namespace PCBuilder.Controllers
                 if (selectedCpu != null)
                 {
                     query = query.Where(m => m.Socket == selectedCpu.Socket);
-                    // Łączymy komunikaty, jeśli oba filtry są aktywne
                     ViewData["CompatibilityMessage"] = (ViewData["CompatibilityMessage"] != null ? ViewData["CompatibilityMessage"] + " oraz " : "") + $"pasujące do gniazda CPU: {selectedCpu.Socket}";
                 }
             }
 
-            if (!string.IsNullOrEmpty(searchString))
+            // --- KOMPATYBILNOŚĆ: PŁYTA GŁÓWNA vs PAMIĘĆ RAM ---
+            int? selectedMemoryId = HttpContext.Session.GetInt32("SelectedMemoryId");
+            if (selectedMemoryId != null)
             {
-                query = query.Where(m => (m.Name != null && m.Name.ToLower().Contains(searchString.ToLower())) || (m.FormFactor != null && m.FormFactor.ToLower().Contains(searchString.ToLower())));
+                var selectedMemory = await _context.Memories.FindAsync(selectedMemoryId);
+                if (selectedMemory != null)
+                {
+                    int.TryParse(selectedMemory.Modules, out int requiredSlots);
+
+                    query = query.Where(m => m.MemoryType == selectedMemory.MemoryType &&
+                                             m.MaxMemory >= selectedMemory.Capacity &&
+                                             m.MemorySlots >= requiredSlots);
+
+                    ViewData["CompatibilityMessage"] = (ViewData["CompatibilityMessage"] != null ? ViewData["CompatibilityMessage"] + " oraz " : "") + 
+                        $"obsługujące RAM ({selectedMemory.Name}: {selectedMemory.Capacity}GB, modułów: {requiredSlots})";
+                }
             }
 
-            return View(await query.OrderBy(m => m.Name).ToListAsync());
+            // --- WYSZUKIWANIE TEKSTOWE ---
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                query = query.Where(m => 
+                    m.Name.Contains(searchString) || 
+                    m.Socket.Contains(searchString) || 
+                    m.MemoryType.Contains(searchString) ||
+                    m.FormFactor.Contains(searchString));
+            }
+
+            var result = await query.OrderBy(m => m.Name).ToListAsync();
+            return View(result);
         }
     }
 }
