@@ -52,14 +52,11 @@ namespace PCBuilder.Data
                     context.Memories.Add(new Memory {
                         Name = p[0],
                         Price = ParseDecimal(p[1]),
-                        Speed = p[2],
-                        Modules = p[9],
-                        Capacity = int.Parse(p[8]),
-                        PricePerGb = ParseDecimal(p[3]),
-                        Color = p[4],
-                        FirstWordLatency = ParseDouble(p[5]),
-                        CasLatency = ParseDouble(p[6]),
-                        MemoryType = p[7], // 8. kolumna (indeks 7)
+                        Speed = int.Parse(p[2]),
+                        Color = p[3],
+                        MemoryType = p[4], // 8. kolumna (indeks 7)
+                        Capacity = int.Parse(p[5]),
+                        Modules = p[6],
                     });
                 }
             }
@@ -75,11 +72,11 @@ namespace PCBuilder.Data
                         Name = p[0],
                         Price = ParseDecimal(p[1]),
                         Chipset = p[2],
-                        Memory = ParseDouble(p[3]),
-                        CoreClock = ParseDouble(p[4]),
-                        BoostClock = ParseDouble(p[5]),
+                        Memory = int.Parse(p[3]),
+                        CoreClock = int.Parse(p[4]),
+                        BoostClock = int.Parse(p[5]),
                         Color = p[6],
-                        Length = ParseDouble(p[7]),
+                        Length = int.Parse(p[7]),
                         RecommendedPsuW = int.TryParse(p[8], out int rpsu) ? rpsu : 0,
                         PowerConnectors = p[9]
                     });
@@ -120,14 +117,12 @@ namespace PCBuilder.Data
                         Price = ParseDecimal(p[1]),
                         Type = p[2],
                         Color = p[3],
-                        Psu = p[4],
-                        SidePanel = p[5],
-                        ExternalVolume = ParseDouble(p[6]),
-                        Internal35Bays = int.TryParse(p[7], out int bays) ? bays : -1,
-                        SupportedMoboFormFactors = p[8],
-                        MaxGpuLengthMm = ParseDouble(p[9]),
-                        MaxCpuCoolerHeightMm = ParseDouble(p[10]),
-                        PsuFormFactor = p[11]
+                        SidePanel = p[4],
+                        ExternalVolume = ParseDouble(p[5]),
+                        SupportedMoboFormFactors = p[6],
+                        MaxGpuLengthMm = ParseDouble(p[7]),
+                        MaxCpuCoolerHeightMm = ParseDouble(p[8]),
+                        PsuFormFactor = p[9]
                     });
                 }
             }
@@ -163,12 +158,11 @@ namespace PCBuilder.Data
                     context.Storages.Add(new Storage {
                         Name = p[0],
                         Price = ParseDecimal(p[1]),
-                        Capacity = ParseDouble(p[2]),
-                        PricePerGb = ParseDecimal(p[3]),
-                        Type = p[4],
-                        Cache = ParseDouble(p[5]),
-                        FormFactor = p[6],
-                        Interface = p[7]
+                        Capacity = int.Parse(p[2]),
+                        Type = p[3],
+                        Cache = int.Parse(p[4]),
+                        FormFactor = p[5],
+                        Interface = p[6]
                     });
                 }
             }
@@ -183,10 +177,10 @@ namespace PCBuilder.Data
                     context.CpuCoolers.Add(new CpuCooler {
                         Name = p[0],
                         Price = ParseDecimal(p[1]),
-                        Rpm = p[2],
-                        NoiseLevel = p[3],
+                        Rpm = int.Parse(p[2]),
+                        NoiseLevel = ParseDouble(p[3]),
                         Color = p[4],
-                        Size = ParseDouble(p[5]),
+                        Size = int.Parse(p[5]),
                         SupportedSockets = p[6],
                         HeightMm = int.TryParse(p[7], out int height) ? height : -1
                     });
