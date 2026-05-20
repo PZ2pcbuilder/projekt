@@ -26,7 +26,7 @@ namespace PCBuilder.Controllers
                 if (selectedCpu != null && !string.IsNullOrEmpty(selectedCpu.Socket))
                 {
                     query = query.Where(cc => cc.SupportedSockets.Contains(selectedCpu.Socket));
-                    ViewData["CompatibilityMessage"] = $"Kompatybilne z socketem {selectedCpu.Socket} ({selectedCpu.Name}).";
+                    ViewData["CompatibilityMessage"] = $"Pokazuję chłodzenia kompatybilne z socketem {selectedCpu.Socket} ({selectedCpu.Name}).";
                 }
             }
 

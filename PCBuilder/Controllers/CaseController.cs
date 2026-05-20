@@ -26,7 +26,7 @@ namespace PCBuilder.Controllers
                 if (selectedCooler != null)
                 {
                     query = query.Where(c => c.MaxCpuCoolerHeightMm >= selectedCooler.HeightMm);
-                    ViewData["CompatibilityMessage"] = $"Mieszczące chłodzenie {selectedCooler.Name} ({selectedCooler.HeightMm}mm).";
+                    ViewData["CompatibilityMessage"] = $"Pokazuję obudowy mieszczące chłodzenie {selectedCooler.Name} ({selectedCooler.HeightMm}mm).";
                 }
             }
 
