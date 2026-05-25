@@ -1,0 +1,159 @@
+﻿using System;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+
+namespace PCBuilder.ConsoleClient
+{
+    class Program
+    {
+        static async Task Main(string[] args)
+        {
+            string apiUrl = "http://localhost:5288/api/data/cpus"; // Zwróć uwagę, czy u Ciebie to ostatecznie http czy https
+            
+            // Handler ignorujący błędy SSL (na wypadek, gdybyś używał https)
+            var handler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+            };
+
+            using HttpClient client = new HttpClient(handler);
+            
+            // AUTORYZACJA REST API
+            client.DefaultRequestHeaders.Add("X-Username", "oski");
+            client.DefaultRequestHeaders.Add("X-Api-Token", "60b7a11c026448efb17a1236fc900851"); 
+            
+            Console.WriteLine("=== KLIENT KONSOLOWY PC BUILDER REST API - PEŁNY CRUD ===\n");
+            
+            try 
+            {
+                // ==========================================
+                // 1. CREATE (POST) - Dodawanie nowego procesora
+                // ==========================================
+                Console.WriteLine("[1] CREATE: Dodawanie nowego procesora (POST)...");
+                var newCpu = new Cpu 
+                { 
+                    Name = "Testowy Procesor REST API", 
+                    Price = 999.99m, 
+                    CoreCount = 8, 
+                    CoreClock = "3.5 GHz", 
+                    BoostClock = "4.5 GHz", 
+                    Microarchitecture = "REST Architecture", 
+                    Tdp = 65, 
+                    Socket = "AM5", 
+                    MemoryType = "DDR5" 
+                };
+
+                var postResponse = await client.PostAsJsonAsync(apiUrl, newCpu);
+                int createdId = 0;
+
+                if (postResponse.IsSuccessStatusCode)
+                {
+                    var createdCpu = await postResponse.Content.ReadFromJsonAsync<Cpu>();
+                    createdId = createdCpu!.Id;
+                    Console.WriteLine($" -> Dodano procesor. Zostało mu przypisane ID w bazie: {createdId}");
+                }
+                else
+                {
+                    Console.WriteLine($" -> BŁĄD DODAWANIA: {postResponse.StatusCode}");
+                    return; 
+                }
+
+                Console.WriteLine("\nNaciśnij Enter, aby przejść do pobrania (READ)...");
+                Console.ReadLine();
+
+                // ==========================================
+                // 2. READ (GET) - Pobieranie listy procesorów
+                // ==========================================
+                Console.WriteLine("[2] READ: Pobieranie zaktualizowanej listy (GET)...");
+                var getResponse = await client.GetAsync(apiUrl);
+                
+                if (getResponse.IsSuccessStatusCode)
+                {
+                    var cpus = await getResponse.Content.ReadFromJsonAsync<List<Cpu>>();
+                    Console.WriteLine($" -> SUKCES! W bazie jest łącznie {cpus!.Count} procesorów.");
+                    Console.WriteLine(" -> Ostatnie 3 na liście to:");
+                    
+                    int count = Math.Min(3, cpus.Count);
+                    for (int i = cpus.Count - count; i < cpus.Count; i++)
+                    {
+                        Console.WriteLine($"    [ID: {cpus[i].Id}] {cpus[i].Name} | Cena: {cpus[i].Price} PLN");
+                    }
+                }
+
+                Console.WriteLine("\nNaciśnij Enter, aby przejść do aktualizacji (UPDATE)...");
+                Console.ReadLine();
+
+                // ==========================================
+                // 3. UPDATE (PUT) - Modyfikacja procesora
+                // ==========================================
+                Console.WriteLine($"[3] UPDATE: Zmiana nazwy i ceny utworzonego procesora o ID {createdId} (PUT)...");
+                newCpu.Id = createdId;
+                newCpu.Name = "Zaktualizowany Procesor REST API";
+                newCpu.Price = 499.00m; // Zmieniamy cenę
+
+                var putResponse = await client.PutAsJsonAsync($"{apiUrl}/{createdId}", newCpu);
+                
+                if (putResponse.IsSuccessStatusCode)
+                {
+                    Console.WriteLine(" -> SUKCES! Procesor zaktualizowany.");
+                    
+                    var verifyResponse = await client.GetAsync(apiUrl);
+                    var verifyCpus = await verifyResponse.Content.ReadFromJsonAsync<List<Cpu>>();
+                    
+                    var zmienionyCpu = verifyCpus!.Find(c => c.Id == createdId);
+                    
+                    if (zmienionyCpu != null)
+                    {
+                        Console.WriteLine($" -> Weryfikacja pobrana z bazy: [ID: {zmienionyCpu.Id}] {zmienionyCpu.Name} | Cena: {zmienionyCpu.Price} PLN");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($" -> BŁĄD AKTUALIZACJI: {putResponse.StatusCode}");
+                }
+
+                Console.WriteLine("\nNaciśnij Enter, aby przejść do usunięcia (DELETE)...");
+                Console.ReadLine();
+
+                // ==========================================
+                // 4. DELETE (DELETE) - Usuwanie procesora
+                // ==========================================
+                Console.WriteLine($"[4] DELETE: Usuwanie procesora o ID {createdId} z bazy (DELETE)...");
+                var deleteResponse = await client.DeleteAsync($"{apiUrl}/{createdId}");
+                
+                if (deleteResponse.IsSuccessStatusCode)
+                {
+                    Console.WriteLine(" -> SUKCES! Procesor został trwale usunięty z bazy danych.");
+                }
+                else
+                {
+                    Console.WriteLine($" -> BŁĄD USUWANIA: {deleteResponse.StatusCode}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"\nWystąpił błąd podczas testu: {ex.Message}");
+            }
+
+            Console.WriteLine("\n=== KONIEC TESTU CRUD. Naciśnij Enter, aby zakończyć... ===");
+            Console.ReadLine();
+        }
+    }
+
+    public class Cpu
+    {
+        public int Id { get; set; }
+        public string? Name { get; set; }
+        public decimal? Price { get; set; }
+        public int CoreCount { get; set; }
+        public string? CoreClock { get; set; }
+        public string? BoostClock { get; set; }
+        public string? Microarchitecture { get; set; }
+        public int Tdp { get; set; }
+        public string? Graphics { get; set; }
+        public string? Socket { get; set; }
+        public string? MemoryType { get; set; }
+    }
+}

@@ -16,6 +16,7 @@ builder.Services.AddControllersWithViews(options =>
 {
     options.Filters.Add<AuthFilter>();
 });
+builder.Services.AddScoped<PCBuilder.Filters.ApiTokenFilter>();
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>

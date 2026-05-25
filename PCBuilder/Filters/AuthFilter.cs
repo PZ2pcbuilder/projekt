@@ -16,10 +16,12 @@ namespace PCBuilder.Filters
             var controller = routeValues["controller"] as string ?? "";
             var path = context.HttpContext.Request.Path.Value ?? "";
 
-            // Endpointy logowania / rejestracji muszą być dostępne bez sesji
             bool isAuthApi = path.StartsWith("/api/auth", StringComparison.OrdinalIgnoreCase);
+            bool isDataApi = path.StartsWith("/api/data", StringComparison.OrdinalIgnoreCase); 
             bool isAccountController = string.Equals(controller, "Account", StringComparison.OrdinalIgnoreCase);
-            if (isAuthApi || isAccountController) return Task.CompletedTask;
+
+            // DODAJEMY isDataApi DO WARUNKU:
+            if (isAuthApi || isDataApi || isAccountController) return Task.CompletedTask;
 
             var userId = context.HttpContext.Session.GetInt32("AuthUserId");
             if (userId.HasValue) return Task.CompletedTask;

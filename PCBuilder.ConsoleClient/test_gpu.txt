@@ -1,0 +1,160 @@
+using System;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+
+namespace PCBuilder.ConsoleClient
+{
+    class Program
+    {
+        static async Task Main(string[] args)
+        {
+            // Nowy adres URL wskazujący na gpus zamiast cpus
+            string apiUrl = "http://localhost:5288/api/data/gpus"; 
+            
+            var handler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+            };
+
+            using HttpClient client = new HttpClient(handler);
+            
+            // AUTORYZACJA REST API
+            client.DefaultRequestHeaders.Add("X-Username", "oski");
+            client.DefaultRequestHeaders.Add("X-Api-Token", "60b7a11c026448efb17a1236fc900851"); 
+            
+            Console.WriteLine("=== KLIENT KONSOLOWY PC BUILDER REST API - CRUD GPU ===\n");
+            
+            try 
+            {
+                // ==========================================
+                // 1. CREATE (POST)
+                // ==========================================
+                Console.WriteLine("[1] CREATE: Dodawanie nowej karty graficznej (POST)...");
+                var newGpu = new Gpu 
+                { 
+                    Name = "Testowy potwór RTX 5090", 
+                    Price = 8999.99m, 
+                    Chipset = "GeForce RTX 5090",
+                    Memory = 32,
+                    CoreClock = 2200,
+                    BoostClock = 2600,
+                    Color = "Black",
+                    Length = 350,
+                    RecommendedPsuW = 1000,
+                    PowerConnectors = "1x 12VHPWR"
+                };
+
+                var postResponse = await client.PostAsJsonAsync(apiUrl, newGpu);
+                int createdId = 0;
+
+                if (postResponse.IsSuccessStatusCode)
+                {
+                    var createdGpu = await postResponse.Content.ReadFromJsonAsync<Gpu>();
+                    createdId = createdGpu!.Id;
+                    Console.WriteLine($" -> SUKCES! Dodano GPU. Przypisane ID w bazie: {createdId}");
+                }
+                else
+                {
+                    Console.WriteLine($" -> BŁĄD DODAWANIA: {postResponse.StatusCode}");
+                    return;
+                }
+
+                Console.WriteLine("\nNaciśnij Enter, aby przejść do pobrania (READ)...");
+                Console.ReadLine();
+
+                // ==========================================
+                // 2. READ (GET)
+                // ==========================================
+                Console.WriteLine("[2] READ: Pobieranie zaktualizowanej listy kart (GET)...");
+                var getResponse = await client.GetAsync(apiUrl);
+                
+                if (getResponse.IsSuccessStatusCode)
+                {
+                    var gpus = await getResponse.Content.ReadFromJsonAsync<List<Gpu>>();
+                    Console.WriteLine($" -> SUKCES! W bazie jest łącznie {gpus!.Count} kart graficznych.");
+                    Console.WriteLine(" -> Ostatnie 3 na liście to:");
+                    
+                    int count = Math.Min(3, gpus.Count);
+                    for (int i = gpus.Count - count; i < gpus.Count; i++)
+                    {
+                        Console.WriteLine($"    [ID: {gpus[i].Id}] {gpus[i].Name} | Cena: {gpus[i].Price} PLN | Długość: {gpus[i].Length}mm");
+                    }
+                }
+
+                Console.WriteLine("\nNaciśnij Enter, aby przejść do aktualizacji (UPDATE)...");
+                Console.ReadLine();
+
+                // ==========================================
+                // 3. UPDATE (PUT)
+                // ==========================================
+                Console.WriteLine($"[3] UPDATE: Zmiana nazwy i ceny utworzonej karty o ID {createdId} (PUT)...");
+                newGpu.Id = createdId;
+                newGpu.Name = "Zaktualizowany i Przetaktowany RTX 5090 Ultra";
+                newGpu.Price = 9499.00m; 
+
+                var putResponse = await client.PutAsJsonAsync($"{apiUrl}/{createdId}", newGpu);
+                
+                if (putResponse.IsSuccessStatusCode)
+                {
+                    Console.WriteLine(" -> SUKCES! Karta została zaktualizowana.");
+                    
+                    var verifyResponse = await client.GetAsync(apiUrl);
+                    var verifyGpus = await verifyResponse.Content.ReadFromJsonAsync<List<Gpu>>();
+                    
+                    var zmienionaGpu = verifyGpus!.Find(g => g.Id == createdId);
+                    if (zmienionaGpu != null)
+                    {
+                        Console.WriteLine($" -> Weryfikacja pobrana z bazy: [ID: {zmienionaGpu.Id}] {zmienionaGpu.Name} | Nowa Cena: {zmienionaGpu.Price} PLN");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($" -> BŁĄD AKTUALIZACJI: {putResponse.StatusCode}");
+                }
+
+                Console.WriteLine("\nNaciśnij Enter, aby przejść do usunięcia (DELETE)...");
+                Console.ReadLine();
+
+                // ==========================================
+                // 4. DELETE (DELETE)
+                // ==========================================
+                Console.WriteLine($"[4] DELETE: Usuwanie karty graficznej o ID {createdId} z bazy (DELETE)...");
+                var deleteResponse = await client.DeleteAsync($"{apiUrl}/{createdId}");
+                
+                if (deleteResponse.IsSuccessStatusCode)
+                {
+                    Console.WriteLine(" -> SUKCES! Karta graficzna została trwale usunięta z bazy danych.");
+                }
+                else
+                {
+                    Console.WriteLine($" -> BŁĄD USUWANIA: {deleteResponse.StatusCode}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"\nWystąpił błąd podczas testu: {ex.Message}");
+            }
+
+            Console.WriteLine("\n=== KONIEC TESTU CRUD GPU. Naciśnij Enter, aby zakończyć... ===");
+            Console.ReadLine();
+        }
+    }
+
+    // Klasa pomocnicza dopasowana do modelu struktury Gpu w bazie danych
+    public class Gpu
+    {
+        public int Id { get; set; }
+        public string? Name { get; set; }
+        public decimal? Price { get; set; }
+        public string? Chipset { get; set; }
+        public int? Memory { get; set; }
+        public int? CoreClock { get; set; }
+        public int? BoostClock { get; set; }
+        public string? Color { get; set; }
+        public int? Length { get; set; }
+        public int RecommendedPsuW { get; set; }
+        public string? PowerConnectors { get; set; }
+    }
+}
