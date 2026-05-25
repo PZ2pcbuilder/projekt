@@ -39,7 +39,6 @@ namespace PCBuilder.Controllers.Api
             if (user == null || !VerifyPassword(req.Password, user.PasswordHash))
                 return Unauthorized(new { error = "Nieprawidłowy login lub hasło." });
 
-            // Aktualizujemy stary format hasha do BCrypt po pierwszym poprawnym logowaniu
             if (!user.PasswordHash.StartsWith("$2"))
             {
                 user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(req.Password);

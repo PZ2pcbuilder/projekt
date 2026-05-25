@@ -8,7 +8,7 @@ namespace PCBuilder.Controllers.Api
 {
     [ApiController]
     [Route("api/data/gpus")]
-    [ServiceFilter(typeof(ApiTokenFilter))] // Sprawdza nagłówki z tokenem
+    [ServiceFilter(typeof(ApiTokenFilter))]
     public class GpuApiController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -18,7 +18,6 @@ namespace PCBuilder.Controllers.Api
             _context = context;
         }
 
-        // 1. READ ALL (GET /api/data/gpus)
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -26,7 +25,6 @@ namespace PCBuilder.Controllers.Api
             return Ok(gpus);
         }
 
-        // 2. READ SINGLE (GET /api/data/gpus/{id})
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -35,7 +33,6 @@ namespace PCBuilder.Controllers.Api
             return Ok(gpu);
         }
 
-        // 3. CREATE (POST /api/data/gpus)
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Gpu newGpu)
         {
@@ -46,7 +43,6 @@ namespace PCBuilder.Controllers.Api
             return CreatedAtAction(nameof(GetById), new { id = newGpu.Id }, newGpu);
         }
 
-        // 4. UPDATE (PUT /api/data/gpus/{id})
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Update(int id, [FromBody] Gpu updatedGpu)
         {

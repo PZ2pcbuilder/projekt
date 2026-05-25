@@ -19,7 +19,7 @@ namespace PCBuilder.Controllers
             filter ??= new CpuFilter();
             var query = _context.Cpus.AsQueryable();
 
-            // Kompatybilność: jeśli wybrano płytę główną, ograniczamy do pasujących socketów
+            
             int? selectedMotherboardId = HttpContext.Session.GetInt32("SelectedMotherboardId");
             if (selectedMotherboardId != null)
             {
@@ -31,7 +31,7 @@ namespace PCBuilder.Controllers
                 }
             }
 
-            // Wyszukiwanie tekstowe
+
             if (!string.IsNullOrWhiteSpace(filter.Search))
             {
                 var s = filter.Search.ToLower();
@@ -41,7 +41,7 @@ namespace PCBuilder.Controllers
                     (c.Microarchitecture != null && c.Microarchitecture.ToLower().Contains(s)));
             }
 
-            // Filtry zakresowe i listy rozwijane
+
             if (filter.MinPrice.HasValue) query = query.Where(c => c.Price >= filter.MinPrice);
             if (filter.MaxPrice.HasValue) query = query.Where(c => c.Price <= filter.MaxPrice);
             if (filter.MinCores.HasValue) query = query.Where(c => c.CoreCount >= filter.MinCores);
