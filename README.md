@@ -13,7 +13,7 @@
 
 # 2. Opis aplikacji
 
-**PC Builder** to zaawansowana aplikacja webowa służąca do wirtualnego konfigurowania zestawów komputerowych.  
+**PC Builder** to aplikacja webowa służąca do wirtualnego konfigurowania zestawów komputerowych.  
 Głównym celem projektu jest ułatwienie użytkownikom doboru kompatybilnych podzespołów spośród szerokiej gamy komponentów komputerowych, takich jak:
 
 - procesory (CPU),
@@ -25,7 +25,7 @@ Głównym celem projektu jest ułatwienie użytkownikom doboru kompatybilnych po
 - dyski,
 - zasilacze.
 
-Aplikacja wyróżnia się inteligentnym systemem sprawdzania kompatybilności sprzętowej w czasie rzeczywistym. Podczas dodawania kolejnych elementów do konfiguracji system automatycznie analizuje zgodność podzespołów i ukrywa lub odrzuca części, które nie pasują do już wybranych komponentów.
+Aplikacja wyróżnia się systemem sprawdzania kompatybilności sprzętowej w czasie rzeczywistym. Podczas dodawania kolejnych elementów do konfiguracji system automatycznie analizuje zgodność podzespołów i ukrywa lub odrzuca części, które nie pasują do już wybranych komponentów.
 
 Dzięki systemowi kont użytkownika niezakończone konfiguracje są automatycznie zapisywane w bazie danych, co umożliwia kontynuowanie pracy po ponownym zalogowaniu.
 
@@ -33,7 +33,7 @@ Dzięki systemowi kont użytkownika niezakończone konfiguracje są automatyczni
 
 # 3. Funkcjonalności
 
-## 🔧 Inteligentny system kompatybilności sprzętowej
+## 🔧 System kompatybilności sprzętowej
 
 Silnik aplikacji analizuje wybory użytkownika na bieżąco, wykorzystując kluczowe parametry techniczne zapisane w modelach danych.
 
