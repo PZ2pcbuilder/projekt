@@ -1,8 +1,8 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using PCBuilder.Models;
-
 namespace PCBuilder.Controllers;
+
 
 public class HomeController : Controller
 {

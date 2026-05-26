@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using PCBuilder.Data;
 using PCBuilder.Services;
 
+
 namespace PCBuilder.Controllers
 {
     public class ConfigurationController : Controller

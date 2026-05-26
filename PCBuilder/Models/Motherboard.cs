@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
+
 namespace PCBuilder.Models
 {
     public class Motherboard

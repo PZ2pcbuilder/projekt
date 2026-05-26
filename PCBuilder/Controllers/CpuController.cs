@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using PCBuilder.Data;
 using PCBuilder.Models.Filters;
 
+
 namespace PCBuilder.Controllers
 {
     public class CpuController : Controller

@@ -7,9 +7,7 @@ namespace PCBuilder.Data
     public class ApplicationDbContext : DbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options)
-        {
-        }
+            : base(options){}
 
         // Tabele komponentów
         public required DbSet<Cpu> Cpus { get; set; }
@@ -42,7 +40,6 @@ namespace PCBuilder.Data
 
             // 2. Jawne zdefiniowanie relacji w PcBuild (Fluent API)
             // Dzięki temu EF stworzy poprawne klucze obce (Foreign Keys) w bazie danych
-            
             modelBuilder.Entity<PcBuild>(entity =>
             {
                 entity.HasOne(d => d.Cpu).WithMany().HasForeignKey(d => d.CpuId).IsRequired(false);
@@ -53,8 +50,6 @@ namespace PCBuilder.Data
                 entity.HasOne(d => d.CpuCooler).WithMany().HasForeignKey(d => d.CpuCoolerId).IsRequired(false);
                 entity.HasOne(d => d.Storage).WithMany().HasForeignKey(d => d.StorageId).IsRequired(false);
                 entity.HasOne(d => d.PowerSupply).WithMany().HasForeignKey(d => d.PowerSupplyId).IsRequired(false);
-                
-
                 entity.HasOne(d => d.User).WithMany().HasForeignKey(d => d.UserId).OnDelete(DeleteBehavior.Cascade);
             });
         }

@@ -1,13 +1,8 @@
-﻿using System;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Threading.Tasks;
-
-namespace PCBuilder.ConsoleClient
+﻿namespace PCBuilder.ConsoleClient
 {
     class Program
     {
-        static async Task Main(string[] args)
+        static async Task Main()
         {
             string apiUrl = "https://localhost:5288/api/data/cpus"; 
             

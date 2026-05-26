@@ -4,6 +4,7 @@ using PCBuilder.Data;
 using PCBuilder.Models;
 using PCBuilder.Services;
 
+
 namespace PCBuilder.Controllers.Api
 {
     /// <summary>
@@ -28,7 +29,6 @@ namespace PCBuilder.Controllers.Api
         public record ChangePasswordRequest(string NewPassword);
 
         // ===================== PUBLICZNE =====================
-
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest req)
         {
@@ -96,7 +96,6 @@ namespace PCBuilder.Controllers.Api
         }
 
         // ===================== ADMIN: ZARZĄDZANIE UŻYTKOWNIKAMI =====================
-
         [HttpGet("users")]
         public IActionResult ListUsers()
         {
@@ -181,7 +180,6 @@ namespace PCBuilder.Controllers.Api
         }
 
         // ===================== HELPERY =====================
-
         private bool IsAdmin()
             => HttpContext.Session.GetString("AuthRole") == "Admin";
 

@@ -2,9 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using PCBuilder.Data;
 using PCBuilder.Services;
 
+
 namespace PCBuilder.Controllers
 {
-
     public class AccountController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -24,6 +24,7 @@ namespace PCBuilder.Controllers
             ViewBag.ReturnUrl = returnUrl ?? "/";
             return View();
         }
+        
         public IActionResult Logout()
         {
             var userId = HttpContext.Session.GetInt32("AuthUserId");
