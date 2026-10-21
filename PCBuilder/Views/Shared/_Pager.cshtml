@@ -1,0 +1,67 @@
+@model PCBuilder.Models.PageInfo
+@using Microsoft.AspNetCore.Routing
+
+@if (Model.TotalPages > 1)
+{
+    var action = ViewContext.RouteData.Values["action"]?.ToString();
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+
+    // Link do wybranej strony z zachowaniem wszystkich aktywnych filtrów (query string)
+    string PageUrl(int p)
+    {
+        var values = new RouteValueDictionary();
+        foreach (var kv in Context.Request.Query)
+        {
+            if (string.Equals(kv.Key, "Page", StringComparison.OrdinalIgnoreCase)) continue;
+            values[kv.Key] = kv.Value.ToString();
+        }
+        values["Page"] = p;
+        return Url.Action(action, controller, values) ?? "#";
+    }
+
+    // Okno numerów stron wokół aktualnej: 1 … 4 5 [6] 7 8 … 20
+    var start = Math.Max(1, Model.Page - 2);
+    var end = Math.Min(Model.TotalPages, Model.Page + 2);
+
+    <nav aria-label="Paginacja wyników" class="mt-4 d-flex flex-column align-items-center gap-2">
+        <ul class="pagination mb-0 shadow-sm">
+            <li class="page-item @(Model.HasPrevious ? "" : "disabled")">
+                <a class="page-link" href="@(Model.HasPrevious ? PageUrl(Model.Page - 1) : "#")" aria-label="Poprzednia">&laquo;</a>
+            </li>
+
+            @if (start > 1)
+            {
+                <li class="page-item"><a class="page-link" href="@PageUrl(1)">1</a></li>
+                if (start > 2)
+                {
+                    <li class="page-item disabled"><span class="page-link">&hellip;</span></li>
+                }
+            }
+
+            @for (var i = start; i <= end; i++)
+            {
+                <li class="page-item @(i == Model.Page ? "active" : "")">
+                    <a class="page-link" href="@PageUrl(i)">@i</a>
+                </li>
+            }
+
+            @if (end < Model.TotalPages)
+            {
+                if (end < Model.TotalPages - 1)
+                {
+                    <li class="page-item disabled"><span class="page-link">&hellip;</span></li>
+                }
+                <li class="page-item"><a class="page-link" href="@PageUrl(Model.TotalPages)">@Model.TotalPages</a></li>
+            }
+
+            <li class="page-item @(Model.HasNext ? "" : "disabled")">
+                <a class="page-link" href="@(Model.HasNext ? PageUrl(Model.Page + 1) : "#")" aria-label="Następna">&raquo;</a>
+            </li>
+        </ul>
+        <small class="text-muted">Pozycje @Model.FirstItem–@Model.LastItem z @Model.TotalCount &middot; strona @Model.Page z @Model.TotalPages</small>
+    </nav>
+}
+else if (Model.TotalCount > 0)
+{
+    <div class="text-center text-muted small mt-3">Pozycje @Model.FirstItem–@Model.LastItem z @Model.TotalCount</div>
+}

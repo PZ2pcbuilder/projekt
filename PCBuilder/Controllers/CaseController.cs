@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PCBuilder.Data;
+using PCBuilder.Models;
 using PCBuilder.Models.Filters;
 
 
@@ -78,9 +79,13 @@ namespace PCBuilder.Controllers
             var colors = await _context.Cases.Select(c => c.Color).Distinct().OrderBy(s => s).ToListAsync();
             var psuFFs = await _context.Cases.Select(c => c.PsuFormFactor).Distinct().OrderBy(s => s).ToListAsync();
 
+            var (items, paging) = await query.OrderBy(c => c.Name).ThenBy(c => c.Id)
+                .ToPagedAsync(filter.Page);
+
             var vm = new CaseIndexViewModel
             {
-                Items = await query.OrderBy(c => c.Name).ToListAsync(),
+                Items = items,
+                Paging = paging,
                 Filter = filter,
                 Types = types,
                 Colors = colors,

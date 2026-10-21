@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PCBuilder.Data;
+using PCBuilder.Models;
 using PCBuilder.Models.Filters;
 
 
@@ -53,9 +54,13 @@ namespace PCBuilder.Controllers
             var colors = await _context.Memories.Select(m => m.Color).Distinct().OrderBy(s => s).ToListAsync();
             var modulesList = await _context.Memories.Select(m => m.Modules).Distinct().OrderBy(s => s).ToListAsync();
 
+            var (items, paging) = await query.OrderByDescending(m => m.MemoryType).ThenBy(m => m.Name).ThenBy(m => m.Id)
+                .ToPagedAsync(filter.Page);
+
             var vm = new MemoryIndexViewModel
             {
-                Items = await query.OrderByDescending(m => m.MemoryType).ThenBy(m => m.Name).ToListAsync(),
+                Items = items,
+                Paging = paging,
                 Filter = filter,
                 MemoryTypes = memTypes,
                 Colors = colors,

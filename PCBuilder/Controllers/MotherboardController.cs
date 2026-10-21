@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PCBuilder.Data;
+using PCBuilder.Models;
 using PCBuilder.Models.Filters;
 
 
@@ -85,9 +86,13 @@ namespace PCBuilder.Controllers
             var memTypes = await _context.Motherboards.Select(m => m.MemoryType).Distinct().OrderBy(s => s).ToListAsync();
             var colors = await _context.Motherboards.Select(m => m.Color).Distinct().OrderBy(s => s).ToListAsync();
 
+            var (items, paging) = await query.OrderBy(m => m.Name).ThenBy(m => m.Id)
+                .ToPagedAsync(filter.Page);
+
             var vm = new MotherboardIndexViewModel
             {
-                Items = await query.OrderBy(m => m.Name).ToListAsync(),
+                Items = items,
+                Paging = paging,
                 Filter = filter,
                 Sockets = sockets,
                 FormFactors = formFactors,

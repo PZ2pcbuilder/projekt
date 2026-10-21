@@ -1,6 +1,8 @@
+using PCBuilder.Models;
+
 namespace PCBuilder.Models.Filters
 {
-    public class StorageFilter
+    public class StorageFilter : PagedFilter
     {
         public string? Search { get; set; }
         public decimal? MinPrice { get; set; }
@@ -14,7 +16,7 @@ namespace PCBuilder.Models.Filters
         public string? Interface { get; set; }
     }
 
-    public class StorageIndexViewModel
+    public class StorageIndexViewModel : PagedViewModel
     {
         public List<Storage> Items { get; set; } = new();
         public StorageFilter Filter { get; set; } = new();

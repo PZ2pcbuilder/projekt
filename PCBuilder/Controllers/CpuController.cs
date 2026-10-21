@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PCBuilder.Data;
+using PCBuilder.Models;
 using PCBuilder.Models.Filters;
 
 
@@ -58,9 +59,13 @@ namespace PCBuilder.Controllers
             var memTypes = await _context.Cpus.Select(c => c.MemoryType).Where(s => s != null).Distinct().OrderBy(s => s).ToListAsync();
             var archs = await _context.Cpus.Select(c => c.Microarchitecture).Where(s => s != null).Distinct().OrderBy(s => s).ToListAsync();
 
+            var (items, paging) = await query.OrderBy(c => c.Name).ThenBy(c => c.Id)
+                .ToPagedAsync(filter.Page);
+
             var vm = new CpuIndexViewModel
             {
-                Items = await query.OrderBy(c => c.Name).ToListAsync(),
+                Items = items,
+                Paging = paging,
                 Filter = filter,
                 Sockets = sockets!,
                 MemoryTypes = memTypes!,

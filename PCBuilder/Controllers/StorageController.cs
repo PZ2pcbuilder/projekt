@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PCBuilder.Data;
+using PCBuilder.Models;
 using PCBuilder.Models.Filters;
 
 
@@ -44,9 +45,13 @@ namespace PCBuilder.Controllers
             var formFactors = await _context.Storages.Select(x => x.FormFactor).Distinct().OrderBy(s => s).ToListAsync();
             var interfaces = await _context.Storages.Select(x => x.Interface).Distinct().OrderBy(s => s).ToListAsync();
 
+            var (items, paging) = await query.OrderBy(x => x.Type).ThenBy(x => x.Name).ThenBy(x => x.Id)
+                .ToPagedAsync(filter.Page);
+
             var vm = new StorageIndexViewModel
             {
-                Items = await query.OrderBy(x => x.Type).ThenBy(x => x.Name).ToListAsync(),
+                Items = items,
+                Paging = paging,
                 Filter = filter,
                 Types = types,
                 FormFactors = formFactors,

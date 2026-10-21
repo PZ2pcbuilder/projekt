@@ -1,6 +1,8 @@
+using PCBuilder.Models;
+
 namespace PCBuilder.Models.Filters
 {
-    public class CpuFilter
+    public class CpuFilter : PagedFilter
     {
         public string? Search { get; set; }
         public decimal? MinPrice { get; set; }
@@ -14,7 +16,7 @@ namespace PCBuilder.Models.Filters
         public string? Microarchitecture { get; set; }
     }
 
-    public class CpuIndexViewModel
+    public class CpuIndexViewModel : PagedViewModel
     {
         public List<Cpu> Items { get; set; } = new();
         public CpuFilter Filter { get; set; } = new();

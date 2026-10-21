@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PCBuilder.Data;
+using PCBuilder.Models;
 using PCBuilder.Models.Filters;
 
 
@@ -55,9 +56,13 @@ namespace PCBuilder.Controllers
             var chipsets = await _context.Gpus.Select(g => g.Chipset).Where(c => c != null).Distinct().OrderBy(c => c).ToListAsync();
             var colors = await _context.Gpus.Select(g => g.Color).Where(c => c != null).Distinct().OrderBy(c => c).ToListAsync();
 
+            var (items, paging) = await query.OrderBy(g => g.Name).ThenBy(g => g.Id)
+                .ToPagedAsync(filter.Page);
+
             var vm = new GpuIndexViewModel
             {
-                Items = await query.OrderBy(g => g.Name).ToListAsync(),
+                Items = items,
+                Paging = paging,
                 Filter = filter,
                 Chipsets = chipsets!,
                 Colors = colors!

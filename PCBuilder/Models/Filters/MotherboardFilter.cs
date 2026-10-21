@@ -1,6 +1,8 @@
+using PCBuilder.Models;
+
 namespace PCBuilder.Models.Filters
 {
-    public class MotherboardFilter
+    public class MotherboardFilter : PagedFilter
     {
         public string? Search { get; set; }
         public decimal? MinPrice { get; set; }
@@ -19,7 +21,7 @@ namespace PCBuilder.Models.Filters
         public string? Color { get; set; }
     }
 
-    public class MotherboardIndexViewModel
+    public class MotherboardIndexViewModel : PagedViewModel
     {
         public List<Motherboard> Items { get; set; } = new();
         public MotherboardFilter Filter { get; set; } = new();

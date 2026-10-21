@@ -117,6 +117,10 @@ Każda kategoria komponentów posiada dedykowany model filtrów, np.:
 - filtrowanie poziomu hałasu,
 - filtrowanie poboru mocy.
 
+### Paginacja
+
+Listy komponentów są stronicowane po stronie bazy danych (domyślnie **30 pozycji na stronę**, stała `PageInfo.DefaultPageSize` w `Models/Paging.cs`). Numer strony przekazywany jest w parametrze `?Page=N`, a linki paginacji zachowują aktywne filtry. Dzięki temu do przeglądarki trafia tylko jedna strona wyników zamiast tysięcy wierszy.
+
 ---
 
 # 4. Sposób użycia — instrukcja krok po kroku

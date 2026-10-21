@@ -1,6 +1,8 @@
+using PCBuilder.Models;
+
 namespace PCBuilder.Models.Filters
 {
-    public class GpuFilter
+    public class GpuFilter : PagedFilter
     {
         public string? Search { get; set; }
         public decimal? MinPrice { get; set; }
@@ -17,7 +19,7 @@ namespace PCBuilder.Models.Filters
         public string? Color { get; set; }
     }
 
-    public class GpuIndexViewModel
+    public class GpuIndexViewModel : PagedViewModel
     {
         public List<Gpu> Items { get; set; } = new();
         public GpuFilter Filter { get; set; } = new();

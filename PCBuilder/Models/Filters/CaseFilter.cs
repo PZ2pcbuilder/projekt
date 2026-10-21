@@ -1,6 +1,8 @@
+using PCBuilder.Models;
+
 namespace PCBuilder.Models.Filters
 {
-    public class CaseFilter
+    public class CaseFilter : PagedFilter
     {
         public string? Search { get; set; }
         public decimal? MinPrice { get; set; }
@@ -16,7 +18,7 @@ namespace PCBuilder.Models.Filters
         public string? PsuFormFactor { get; set; }
     }
 
-    public class CaseIndexViewModel
+    public class CaseIndexViewModel : PagedViewModel
     {
         public List<Case> Items { get; set; } = new();
         public CaseFilter Filter { get; set; } = new();

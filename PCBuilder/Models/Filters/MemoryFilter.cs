@@ -1,6 +1,8 @@
+using PCBuilder.Models;
+
 namespace PCBuilder.Models.Filters
 {
-    public class MemoryFilter
+    public class MemoryFilter : PagedFilter
     {
         public string? Search { get; set; }
         public decimal? MinPrice { get; set; }
@@ -14,7 +16,7 @@ namespace PCBuilder.Models.Filters
         public string? Modules { get; set; }
     }
 
-    public class MemoryIndexViewModel
+    public class MemoryIndexViewModel : PagedViewModel
     {
         public List<Memory> Items { get; set; } = new();
         public MemoryFilter Filter { get; set; } = new();

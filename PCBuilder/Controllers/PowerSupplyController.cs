@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PCBuilder.Data;
+using PCBuilder.Models;
 using PCBuilder.Models.Filters;
 
 
@@ -71,9 +72,13 @@ namespace PCBuilder.Controllers
             var colors = await _context.PowerSupplies.Select(p => p.Color).Where(s => s != null).Distinct().OrderBy(s => s).ToListAsync();
             var formFactors = await _context.PowerSupplies.Select(p => p.FormFactor).Distinct().OrderBy(s => s).ToListAsync();
 
+            var (items, paging) = await query.OrderBy(p => p.Wattage).ThenBy(p => p.Id)
+                .ToPagedAsync(filter.Page);
+
             var vm = new PowerSupplyIndexViewModel
             {
-                Items = await query.OrderBy(p => p.Wattage).ToListAsync(),
+                Items = items,
+                Paging = paging,
                 Filter = filter,
                 Types = types,
                 Efficiencies = effs!,

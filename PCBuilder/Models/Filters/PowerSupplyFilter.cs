@@ -1,6 +1,8 @@
+using PCBuilder.Models;
+
 namespace PCBuilder.Models.Filters
 {
-    public class PowerSupplyFilter
+    public class PowerSupplyFilter : PagedFilter
     {
         public string? Search { get; set; }
         public decimal? MinPrice { get; set; }
@@ -16,7 +18,7 @@ namespace PCBuilder.Models.Filters
         public string? FormFactor { get; set; }
     }
 
-    public class PowerSupplyIndexViewModel
+    public class PowerSupplyIndexViewModel : PagedViewModel
     {
         public List<PowerSupply> Items { get; set; } = new();
         public PowerSupplyFilter Filter { get; set; } = new();

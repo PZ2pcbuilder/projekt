@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PCBuilder.Data;
+using PCBuilder.Models;
 using PCBuilder.Models.Filters;
 
 
@@ -66,9 +67,13 @@ namespace PCBuilder.Controllers
             // Lista wszystkich gniazd – wyciągamy z procesorów (główne źródło prawdy)
             var sockets = await _context.Cpus.Select(c => c.Socket).Where(s => s != null).Distinct().OrderBy(s => s).ToListAsync();
 
+            var (items, paging) = await query.OrderBy(cc => cc.Name).ThenBy(cc => cc.Id)
+                .ToPagedAsync(filter.Page);
+
             var vm = new CpuCoolerIndexViewModel
             {
-                Items = await query.OrderBy(cc => cc.Name).ToListAsync(),
+                Items = items,
+                Paging = paging,
                 Filter = filter,
                 Colors = colors!,
                 Sockets = sockets!
